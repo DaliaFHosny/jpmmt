@@ -10,11 +10,11 @@ import org.junit.Test;
 
 public class UtilsTest {
 	private List<String> words;	
-	private String text;
+	//private String text;
 	
 	@Before
 	public void setup() {
-		this.text = "A business process or business method is a collection of related, structured activities.";
+		//this.text = "A business process or business method is a collection of related, structured activities.";
 		
 		this.words = new ArrayList<String>();
 		this.words.add("A");
