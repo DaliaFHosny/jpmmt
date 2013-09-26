@@ -4,6 +4,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import de.lsem.evaluation.EvaluationMeasures;
+import de.lsem.process.matching.ProcessMapping;
 import de.lsem.process.model.ProcessModel;
 
 
@@ -40,8 +42,10 @@ public class OneToOneMatchEvaluation {
 		return this.check.checkEvaluationMapping(models, standard);
 	}
 	
-	public void check(String filename) {
-		this.reader.read(filename);
+	public EvaluationMeasures evaluate(Collection<ProcessMapping> mappings, String standardFolder) {
+		Map<String, Map<String, ModelAlignment>> standard = this.reader.bulkRead(standardFolder);
+		ModelAlignmentEvaluation evaluation = new ModelAlignmentEvaluation(standard);
+		return evaluation.evaluate(mappings);
 	}
 
 	public void setAlignmentSeperator(String seperator) {
