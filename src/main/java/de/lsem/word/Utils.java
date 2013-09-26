@@ -42,7 +42,7 @@ public class Utils {
 			URL url = new URL("file", null, Configuration.INSTANCE.getWordNetFolder());
 			IDictionary dic = new Dictionary(url);
 			dic.open();
-			wordnetStemmer = new WordnetStemmer(dic);
+			wordnetStemmer = new WordnetStemmer(dic);			
 		} catch (MalformedURLException e) {
 			// TODO: Exception
 			e.printStackTrace();
@@ -52,6 +52,7 @@ public class Utils {
 		}		
 		
 		porterStemmer = new PorterStemmer();
+		levenshteinComparer = new LevenshteinComparer();
 	}
 	
 	/**
@@ -151,7 +152,9 @@ public class Utils {
 	public static boolean areWordsEqual(String word1, String word2) {
 		String stem1 = stemPorter(word1);
 		String stem2 = stemPorter(word2);
-		if (levenshteinComparer.compare(stem1, stem2) >= 0.85) {
+		double s = levenshteinComparer.compare(stem1, stem2);
+		System.out.println(s);
+		if (s >= 0.5) {
 			return true;
 		}
 		

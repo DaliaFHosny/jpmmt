@@ -4,7 +4,7 @@ import de.lsem.process.io.ProcessModelReader;
 import de.lsem.process.model.ProcessModel;
 
 /*
- * Copyright (c) 2013 Christopher Klinkmï¿½ller
+ * Copyright (c) 2013 Christopher Klinkmüller
  * 
  * This software is released under the terms of the
  * MIT license. See http://opensource.org/licenses/MIT

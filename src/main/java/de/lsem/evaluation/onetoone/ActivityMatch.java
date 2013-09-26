@@ -8,7 +8,12 @@ package de.lsem.evaluation.onetoone;
  * for more information.
  */
 
-public class ActivityMatch {
+/**
+ * 
+ * @author Christopher Klinkmüller
+ *
+ */
+class ActivityMatch {
 	private String firstLabel;
 	private String secondLabel;
 	

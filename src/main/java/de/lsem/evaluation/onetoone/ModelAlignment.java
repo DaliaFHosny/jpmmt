@@ -13,7 +13,7 @@ import java.util.Set;
  * for more information.
  */
 
-public class ModelAlignment {
+class ModelAlignment {
 	private String firstModel;
 	private String secondModel;
 	private Set<ActivityMatch> activityMatches;
