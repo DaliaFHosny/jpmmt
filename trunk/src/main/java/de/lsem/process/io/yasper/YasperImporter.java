@@ -68,7 +68,7 @@ class YasperImporter {
 			if (nameElement != null) {
 				Element textElement = (Element)nameElement.getElementsByTagName("text").item(0);
 				if (textElement != null) {
-					name = textElement.getTextContent();
+					name = textElement.getTextContent().toLowerCase();
 				}
 			}
 			if (isPlace) {

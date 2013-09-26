@@ -1,6 +1,9 @@
 package de.lsem.process.io;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import de.lsem.process.model.ProcessModel;
@@ -20,6 +23,17 @@ public abstract class ProcessModelReader {
 	}
 	
 	public abstract ProcessModel read(String filename); 
+	
+	public List<ProcessModel> readModels(String foldername) {
+		List<ProcessModel> models = new ArrayList<ProcessModel>();
+		
+		File folder = new File(foldername);
+		for (File file : folder.listFiles()) {
+			models.add(this.read(file.getAbsolutePath()));
+		}
+		
+		return models;
+	}
 	
 	protected void checkForMultipleExits(ProcessModel process) {
 		Set<ProcessNode> exits = new HashSet<ProcessNode>();
