@@ -42,8 +42,19 @@ public class OneToOneMatchEvaluation {
 		return this.check.checkEvaluationMapping(models, standard);
 	}
 	
+	public List<String> checkStandard(Collection<ProcessModel> models, Collection<String> standardFiles) {
+		Map<String, Map<String, ModelAlignment>> standard = this.reader.bulkRead(standardFiles);		
+		return this.check.checkEvaluationMapping(models, standard);
+	}
+	
 	public EvaluationMeasures evaluate(Collection<ProcessMapping> mappings, String standardFolder) {
 		Map<String, Map<String, ModelAlignment>> standard = this.reader.bulkRead(standardFolder);
+		ModelAlignmentEvaluation evaluation = new ModelAlignmentEvaluation(standard);
+		return evaluation.evaluate(mappings);
+	}
+	
+	public EvaluationMeasures evaluate(Collection<ProcessMapping> mappings, Collection<String> standardFiles) {
+		Map<String, Map<String, ModelAlignment>> standard = this.reader.bulkRead(standardFiles);
 		ModelAlignmentEvaluation evaluation = new ModelAlignmentEvaluation(standard);
 		return evaluation.evaluate(mappings);
 	}

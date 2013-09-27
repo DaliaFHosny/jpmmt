@@ -119,6 +119,6 @@ public class EvaluationMeasures {
 		}
 		
 		return mean / values.size();
-	}	
+	}
 	
 }

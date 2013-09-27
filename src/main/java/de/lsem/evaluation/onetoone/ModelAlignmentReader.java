@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -62,6 +63,20 @@ class ModelAlignmentReader {
 		}	
 		
 		return lines;
+	}
+	
+	public Map<String, Map<String, ModelAlignment>> bulkRead(Collection<String> alignmentFiles) {
+		HashMap<String, Map<String, ModelAlignment>> standard = new HashMap<String, Map<String, ModelAlignment>>();
+		
+		for (String file : alignmentFiles) {
+			ModelAlignment alignment = this.read(file);
+			
+			if (alignment != null) {
+				this.addAlignmentToStandard(alignment, standard);
+			}
+		}
+		
+		return standard;
 	}
 	
 	public Map<String, Map<String, ModelAlignment>> bulkRead(String alignmentFolder) {

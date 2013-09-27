@@ -22,6 +22,11 @@ import com.google.common.io.Resources;
  * for more information.
  */
 
+/**
+ * 
+ * @author Christopher Klinkmüller
+ *
+ */
 public final class Configuration {
 	private List<String> stopWords;
 	private String wordNetFolder;

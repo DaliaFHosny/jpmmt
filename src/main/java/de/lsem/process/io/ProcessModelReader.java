@@ -2,6 +2,7 @@ package de.lsem.process.io;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -23,6 +24,16 @@ public abstract class ProcessModelReader {
 	}
 	
 	public abstract ProcessModel read(String filename); 
+	
+	public List<ProcessModel> readModels(Collection<String> filenames) {
+		List<ProcessModel> models = new ArrayList<ProcessModel>();
+		
+		for (String file : filenames) {
+			models.add(this.read(file));
+		}
+		
+		return models;
+	}
 	
 	public List<ProcessModel> readModels(String foldername) {
 		List<ProcessModel> models = new ArrayList<ProcessModel>();
