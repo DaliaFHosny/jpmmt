@@ -1,6 +1,7 @@
 package de.lsem.config;
 
 import java.io.File;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -13,6 +14,9 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 import com.google.common.io.Resources;
+
+import edu.mit.jwi.Dictionary;
+import edu.mit.jwi.IDictionary;
 
 /*
  * Copyright (c) 2013 Christopher Klinkmüller
@@ -30,7 +34,9 @@ import com.google.common.io.Resources;
 public final class Configuration {
 	private List<String> stopWords;
 	private String wordNetFolder;
+	private IDictionary dictionary;
 	private static String configurationFile = Resources.getResource("config.xml").getFile();	
+	
 	
 	public static final Configuration INSTANCE = new Configuration();	
 	
@@ -50,10 +56,19 @@ public final class Configuration {
 			}
 			
 			NodeList wordNetNode = document.getElementsByTagName("WordNet");
-			this.wordNetFolder = ((Element)wordNetNode.item(0)).getAttribute("dictionaryFolder");			
+			this.wordNetFolder = ((Element)wordNetNode.item(0)).getAttribute("dictionaryFolder");	
+			
+			URL url = new URL("file", null, this.wordNetFolder);
+			this.dictionary = new Dictionary(url);
+			this.dictionary.open();
 	    } catch (Exception e) {
 	    	e.printStackTrace();
 		}
+	}
+	
+	@Override
+	protected void finalize() throws Throwable {
+		this.dictionary.close();
 	}
 	
 	public Collection<String> getStopWords() {
@@ -62,5 +77,9 @@ public final class Configuration {
 	
 	public String getWordNetFolder() {
 		return this.wordNetFolder;
+	}
+	
+	public IDictionary getWordNetDictionary() {
+		return this.dictionary;
 	}
 }

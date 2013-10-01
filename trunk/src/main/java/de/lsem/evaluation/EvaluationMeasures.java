@@ -88,7 +88,6 @@ public class EvaluationMeasures {
 			double precision = tp / (tp + fp);
 			double recall = tp / (tp + fn);
 			double fmeasure = (precision + recall == 0) ? 0 : 2 * precision * recall / (precision + recall);			
-			System.out.println("Precision: " + precision +"\tRecall: " + recall + "\tF-Measure: " + fmeasure);
 			precisions.add(precision);
 			recalls.add(recall);
 			fmeasures.add(fmeasure);

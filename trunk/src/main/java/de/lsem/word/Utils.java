@@ -1,8 +1,5 @@
 package de.lsem.word;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -13,8 +10,6 @@ import java.util.StringTokenizer;
 import de.lsem.config.Configuration;
 import de.lsem.word.similarity.LevenshteinComparer;
 import edu.cmu.lti.ws4j.util.PorterStemmer;
-import edu.mit.jwi.Dictionary;
-import edu.mit.jwi.IDictionary;
 import edu.mit.jwi.item.POS;
 import edu.mit.jwi.morph.WordnetStemmer;
 
@@ -38,19 +33,7 @@ public class Utils {
 	private static LevenshteinComparer levenshteinComparer;
 	
 	static {
-		try {
-			URL url = new URL("file", null, Configuration.INSTANCE.getWordNetFolder());
-			IDictionary dic = new Dictionary(url);
-			dic.open();
-			wordnetStemmer = new WordnetStemmer(dic);			
-		} catch (MalformedURLException e) {
-			// TODO: Exception
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO: Exception
-			e.printStackTrace();
-		}		
-		
+		wordnetStemmer = new WordnetStemmer(Configuration.INSTANCE.getWordNetDictionary());		
 		porterStemmer = new PorterStemmer();
 		levenshteinComparer = new LevenshteinComparer();
 	}
@@ -136,7 +119,7 @@ public class Utils {
 		List<String> tokens = new ArrayList<String>();
 		while (tokenizer.hasMoreTokens()) {
 			String token = tokenizer.nextToken().replaceAll("[^A-Za-z_]", "").toLowerCase();
-			if (!Configuration.INSTANCE.getStopWords().contains(token)) {
+			if (!token.equals("") && !Configuration.INSTANCE.getStopWords().contains(token)) {
 				tokens.add(token);
 			}
 		}				
@@ -153,7 +136,6 @@ public class Utils {
 		String stem1 = stemPorter(word1);
 		String stem2 = stemPorter(word2);
 		double s = levenshteinComparer.compare(stem1, stem2);
-		System.out.println(s);
 		if (s >= 0.5) {
 			return true;
 		}
