@@ -102,11 +102,16 @@ public class BagOfWords {
 		ArrayList<BagOfWords> bags = new ArrayList<BagOfWords>();
 		
 		for (ProcessNode node : nodes) {
-			BagOfWords bag = new BagOfWords(node.getModel());
-			bag.addNode(node);
-			
-			for (String word : Utils.tokenizeAndRemoveStopWords(node.getLabel())) {
-				bag.addWord(word);
+			if (node.isActivity() || node.getLabel().equals("")) {
+				BagOfWords bag = new BagOfWords(node.getModel());
+				bag.addNode(node);
+				
+				for (String word : Utils.tokenizeAndRemoveStopWords(node.getLabel())) {
+					bag.addWord(word);
+				}
+				if (bag.wordsSize() != 0) {
+					bags.add(bag);
+				}				
 			}
 		}
 		

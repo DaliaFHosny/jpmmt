@@ -79,7 +79,6 @@ class ModelAlignmentEvaluation {
 
 	private ModelAlignment transform(ProcessMapping mapping) {
 		ModelAlignment alignment = new ModelAlignment(mapping.getModel1().getName(), mapping.getModel2().getName());
-		
 		for (FragmentMatch match : mapping.getFragmentMatch()) {
 			for (ProcessNode node1 : match.getFragment1().getProcessNodes()) {
 				for (ProcessNode node2 : match.getFragment2().getProcessNodes()) {

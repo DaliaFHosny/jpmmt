@@ -69,6 +69,7 @@ public class EvaluationMeasures {
 	}
 
 	public void add(int tp, int fp, int fn) {
+		System.out.println("TP: " + tp + "\tFP: " + fp + "\tFN: " + fn);
 		this.tps.add(tp);
 		this.fps.add(fp);
 		this.fns.add(fn);
@@ -82,10 +83,12 @@ public class EvaluationMeasures {
 		for (int a = 0; a < this.tps.size(); a++) {
 			double tp = this.tps.get(a);
 			double fp = this.fps.get(a);
+			tp = (tp == 0 && fp == 0) ? 1 : tp;
 			double fn = this.fns.get(a);
 			double precision = tp / (tp + fp);
 			double recall = tp / (tp + fn);
-			double fmeasure = 2 * precision * recall / (precision * recall);
+			double fmeasure = (precision + recall == 0) ? 0 : 2 * precision * recall / (precision + recall);			
+			System.out.println("Precision: " + precision +"\tRecall: " + recall + "\tF-Measure: " + fmeasure);
 			precisions.add(precision);
 			recalls.add(recall);
 			fmeasures.add(fmeasure);

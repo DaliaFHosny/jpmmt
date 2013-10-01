@@ -108,7 +108,10 @@ public class Matrix<T> {
 		}
 		
 		double sim = this.similarities[this.objectIds1.get(obj1)][this.objectIds2.get(obj2)];
-		return sim >= this.threshold ? sim : this.thresholdEquivalent;
+		sim = sim >= this.threshold ? sim : this.thresholdEquivalent;
+		//System.out.println(sim);
+		
+		return sim;
 	}
 	
 	public List<Double> getValuesForObject1 (T obj1, Set<T> objs2) {
@@ -143,6 +146,7 @@ public class Matrix<T> {
 		return matches;
 	}
 	
+	/*
 	public List<Match<T>> toDescendingSortedMatchList() {
 		return this.toSortedMatchList(new Comparator<Match<T>>() {
 			public int compare(Match<T> match1, Match<T> match2) {
@@ -164,12 +168,46 @@ public class Matrix<T> {
 			
 		});
 	}
+	*/
 	
-	private List<Match<T>> toSortedMatchList(Comparator<Match<T>> comparator) {
-		List<Match<T>> matches = this.toMatchList();
+	public List<Match<T>> toDescendingSortedMatchList() {
+		final List<Match<T>> matches = this.toMatchList();
+		return this.toSortedMatchList(matches, new Comparator<Integer>() {
+			public int compare(Integer i1, Integer i2) {
+				double sim1 = getValue(matches.get(i1).getObject1(), matches.get(i1).getObject2());
+				double sim2 = getValue(matches.get(i2).getObject1(), matches.get(i2).getObject2());
+				return sim1 > sim2 ? -1 : (Math.abs(sim1 - sim2) < 0.0001 ? 0 : 1); 
+			}
+			
+		});
+	}
+	
+	public List<Match<T>> toAscendingSortedMatchList() {
+		final List<Match<T>> matches = this.toMatchList();
+		return this.toSortedMatchList(matches, new Comparator<Integer>() {
+			public int compare(Integer i1, Integer i2) {
+				double sim1 = getValue(matches.get(i1).getObject1(), matches.get(i2).getObject2());
+				double sim2 = getValue(matches.get(i1).getObject1(), matches.get(i2).getObject2());
+				return sim1 > sim2 ? 1 : (Math.abs(sim1 - sim2) < 0.0001 ? 0 : -1); 
+			}
+			
+		});
+	}
+	
+	private List<Match<T>> toSortedMatchList(List<Match<T>> matches, Comparator<Integer> comparator) {
+		List<Integer> indecies = new ArrayList<Integer>();
+		List<Match<T>> copy = new ArrayList<Match<T>>();
 		
-		Collections.sort(matches, comparator);
+		for (int a = 0; a < matches.size(); a++) {
+			indecies.add(a);
+		}
 		
-		return matches;
+		Collections.sort(indecies, comparator);
+		
+		for (int a : indecies) {
+			copy.add(matches.get(a));
+		}
+		
+		return copy;
 	}
 }

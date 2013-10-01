@@ -42,10 +42,10 @@ public class BasicBagOfWordsComparer implements ObjectComparer<BagOfWords>  {
 		for (String word1 : bag1.getWords()) {
 			for (String word2 : bag2.getWords()) {
 				double sim = this.wordComparer.compare(word1, word2);
-				if (!maxSim.containsKey(word1) || maxSim.get(word1) < sim) {
+				if (!maxSim.containsKey(word1) || maxSim.get(word1) <= sim) {
 					maxSim.put(word1, sim);
 				}
-				if (!maxSim.containsKey(word2) || maxSim.get(word2) < sim) {
+				if (!maxSim.containsKey(word2) || maxSim.get(word2) <= sim) {
 					maxSim.put(word2, sim);
 				}
 			}
@@ -55,8 +55,7 @@ public class BasicBagOfWordsComparer implements ObjectComparer<BagOfWords>  {
 	
 	@Override
 	public double compare(BagOfWords bag1, BagOfWords bag2) {
-		HashMap<String, Double> maxSim = this.calculateSimilarities(bag1, bag2);
-		
+		HashMap<String, Double> maxSim = this.calculateSimilarities(bag1, bag2);		
 		return this.average(bag1, bag2, maxSim);
 	}	
 }
