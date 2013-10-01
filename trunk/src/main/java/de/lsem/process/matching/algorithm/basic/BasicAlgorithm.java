@@ -6,6 +6,9 @@ import java.util.List;
 import de.lsem.matrix.Match;
 import de.lsem.matrix.Matrix;
 import de.lsem.matrix.MatrixCalculator;
+import de.lsem.matrix.ObjectComparer;
+import de.lsem.process.matching.Fragment;
+import de.lsem.process.matching.FragmentMatch;
 import de.lsem.process.matching.ProcessMapping;
 import de.lsem.process.matching.ProcessMappingManager;
 import de.lsem.process.matching.algorithm.MappingAlgorithm;
@@ -14,7 +17,7 @@ import de.lsem.process.model.ProcessModel;
 import de.lsem.process.model.ProcessNode;
 
 /*
- * Copyright (c) 2013 Christopher Klinkmï¿½ller
+ * Copyright (c) 2013 Christopher Klinkmüller
  * 
  * This software is released under the terms of the
  * MIT license. See http://opensource.org/licenses/MIT
@@ -23,7 +26,7 @@ import de.lsem.process.model.ProcessNode;
 
 /**
  * 
- * @author Christopher Klinkmï¿½ller
+ * @author Christopher Klinkmüller
  *
  */
 public class BasicAlgorithm extends MappingAlgorithm {
@@ -35,8 +38,8 @@ public class BasicAlgorithm extends MappingAlgorithm {
 		return this.processMappingManager ;
 	}
 	
-	public BasicAlgorithm(MatrixCalculator<BagOfWords> matrixCalculator, double threshold) {
-		this.matrixCalculator = matrixCalculator;
+	public BasicAlgorithm(ObjectComparer<BagOfWords> comparer, double threshold) {
+		this.matrixCalculator = new MatrixCalculator<BagOfWords>(comparer);
 		this.matchThreshold = threshold;
 		this.processMappingManager = new ProcessMappingManager();
 	}
@@ -64,7 +67,7 @@ public class BasicAlgorithm extends MappingAlgorithm {
 	
 	protected ProcessMapping determineProcessMapping(Matrix<BagOfWords> sim, ProcessModel process1, ProcessModel process2) {
 		List<Match<BagOfWords>> matches = sim.toDescendingSortedMatchList();	
-		
+				
 		ProcessMapping processMapping = new ProcessMapping(process1, process2);
 		
 		int i = 0;
@@ -73,7 +76,8 @@ public class BasicAlgorithm extends MappingAlgorithm {
 			for (ProcessNode node1 : selectedMatch.getObject1().getNodes()) {
 				for (ProcessNode node2 : selectedMatch.getObject2().getNodes()) {
 					Match<ProcessNode> match = new Match<ProcessNode>(node1, node2);
-					this.processMappingManager.addNodeMatch(match, processMapping);
+					this.addMatchToProcessMapping(processMapping, match);					
+					//this.processMappingManager.addNodeMatch(match, processMapping);
 				}
 			}
 			matches.remove(i);
@@ -82,9 +86,19 @@ public class BasicAlgorithm extends MappingAlgorithm {
 		return processMapping;
 	}
 
+	private void addMatchToProcessMapping(ProcessMapping processMapping, Match<ProcessNode> match) {
+		Fragment fragment1 = new Fragment();
+		fragment1.addProcessNode(match.getObject1());
+		
+		Fragment fragment2 = new Fragment();
+		fragment2.addProcessNode(match.getObject2());
+		
+		processMapping.addFragmentMatch(new FragmentMatch(fragment1, fragment2));		
+	}
+
 	protected Matrix<BagOfWords> determineSimilarityMatrix(ProcessModel process1, ProcessModel process2) {
 		Collection<BagOfWords> bags1 = BagOfWords.getBagsOfWords(process1.getActivities());
-		Collection<BagOfWords> bags2 = BagOfWords.getBagsOfWords(process2.getActivities());		
+		Collection<BagOfWords> bags2 = BagOfWords.getBagsOfWords(process2.getActivities());
 		return this.matrixCalculator.calculateMatrix(bags1, bags2);		
-	}
+	}	
 }

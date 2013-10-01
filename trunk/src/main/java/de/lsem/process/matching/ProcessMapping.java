@@ -1,5 +1,6 @@
 package de.lsem.process.matching;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import de.lsem.process.model.ProcessModel;
@@ -15,11 +16,12 @@ import de.lsem.process.model.ProcessModel;
 public class ProcessMapping {
 	private ProcessModel model1;
 	private ProcessModel model2;
-	private Set<FragmentMatch> fragmentMatch;
+	private Set<FragmentMatch> fragmentMatches;
 	
 	public ProcessMapping(ProcessModel model1, ProcessModel model2) {
 		this.model1 = model1;
 		this.model2 = model2;
+		this.fragmentMatches = new HashSet<FragmentMatch>();
 	}
 	
 	public ProcessModel getModel1() {
@@ -39,14 +41,14 @@ public class ProcessMapping {
 	}
 	
 	public void addFragmentMatch(FragmentMatch fragmentMatch) {
-		this.fragmentMatch.add(fragmentMatch);
+		this.fragmentMatches.add(fragmentMatch);
 	}
 	
 	public Iterable<FragmentMatch> getFragmentMatch() {
-		return this.fragmentMatch;
+		return this.fragmentMatches;
 	}
 	
 	public void removeFragmentMatch(FragmentMatch fragmentMapping) {
-		this.fragmentMatch.remove(fragmentMapping);
+		this.fragmentMatches.remove(fragmentMapping);
 	}
 }

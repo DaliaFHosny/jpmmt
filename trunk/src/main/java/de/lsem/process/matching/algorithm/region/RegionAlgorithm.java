@@ -7,7 +7,7 @@ import java.util.List;
 
 import de.lsem.matrix.Match;
 import de.lsem.matrix.Matrix;
-import de.lsem.matrix.MatrixCalculator;
+import de.lsem.matrix.ObjectComparer;
 import de.lsem.process.matching.algorithm.basic.BasicAlgorithm;
 import de.lsem.process.matching.util.MappingDeterminer;
 import de.lsem.process.model.BagOfWords;
@@ -16,7 +16,7 @@ import de.lsem.process.model.ProcessNode;
 import de.lsem.process.rpst.RefinedProcessStructureTree;
 
 /*
- * Copyright (c) 2013 Christopher Klinkmï¿½ller
+ * Copyright (c) 2013 Christopher Klinkmüller
  * 
  * This software is released under the terms of the
  * MIT license. See http://opensource.org/licenses/MIT
@@ -24,12 +24,11 @@ import de.lsem.process.rpst.RefinedProcessStructureTree;
  */
 
 public class RegionAlgorithm extends BasicAlgorithm {
-	private MatrixCalculator<BagOfWords> matrixCalculator;
 	private double regionPenalty;
 	private double regionThreshold;
 	
-	public RegionAlgorithm(MatrixCalculator<BagOfWords> matrixCalculator, double matchThreshold, double regionPenalty, double regionThreshold) {
-		super(matrixCalculator, matchThreshold);
+	public RegionAlgorithm(ObjectComparer<BagOfWords> comparer, double matchThreshold, double regionPenalty, double regionThreshold) {
+		super(comparer, matchThreshold);
 		this.regionThreshold = regionThreshold;
 		this.regionPenalty = regionPenalty;
 	}
@@ -41,7 +40,7 @@ public class RegionAlgorithm extends BasicAlgorithm {
 		Collection<BagOfWords> bags2 = BagOfWords.getBagsOfWords(process2.getActivities());
 				
 		// calculate similarity
-		Matrix<BagOfWords> sim = this.matrixCalculator.calculateMatrix(bags1, bags2);
+		Matrix<BagOfWords> sim = this.getMatrixCalculator().calculateMatrix(bags1, bags2);
 		
 		// update similarity by regional affiliation
 		this.updateSimilarityUsingRegions(sim, process1, process2);
@@ -52,7 +51,7 @@ public class RegionAlgorithm extends BasicAlgorithm {
 		List<BagOfWords> regionBags1 = this.getTopLevelBagOfWords(model1);
 		List<BagOfWords> regionBags2 = this.getTopLevelBagOfWords(model2);
 		
-		Matrix<BagOfWords> matrix = this.matrixCalculator.calculateMatrix(regionBags1, regionBags2);
+		Matrix<BagOfWords> matrix = this.getMatrixCalculator().calculateMatrix(regionBags1, regionBags2);
 		this.updateRegionValues(sim, matrix);
 	}
 

@@ -10,7 +10,7 @@ import java.util.Set;
 
 import de.lsem.matrix.Match;
 import de.lsem.matrix.Matrix;
-import de.lsem.matrix.MatrixCalculator;
+import de.lsem.matrix.ObjectComparer;
 import de.lsem.process.matching.Fragment;
 import de.lsem.process.matching.FragmentMatch;
 import de.lsem.process.matching.ProcessMapping;
@@ -22,7 +22,7 @@ import de.lsem.process.rpst.RefinedProcessStructureTree;
 import de.lsem.word.Utils;
 
 /*
- * Copyright (c) 2013 Christopher Klinkmï¿½ller
+ * Copyright (c) 2013 Christopher Klinkmüller
  * 
  * This software is released under the terms of the
  * MIT license. See http://opensource.org/licenses/MIT
@@ -30,8 +30,8 @@ import de.lsem.word.Utils;
  */
 
 public class RpstSummaryAlgorithm extends BasicAlgorithm {
-	public RpstSummaryAlgorithm(MatrixCalculator<BagOfWords> matrixCalculator, double threshold) {
-		super(matrixCalculator, threshold);
+	public RpstSummaryAlgorithm(ObjectComparer<BagOfWords> comparer, double threshold) {
+		super(comparer, threshold);
 	}
 
 	private RefinedProcessStructureTree tree1;

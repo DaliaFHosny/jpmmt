@@ -6,7 +6,7 @@ import java.util.List;
 
 import de.lsem.matrix.Match;
 import de.lsem.matrix.Matrix;
-import de.lsem.matrix.MatrixCalculator;
+import de.lsem.matrix.ObjectComparer;
 import de.lsem.process.matching.ProcessMapping;
 import de.lsem.process.matching.algorithm.basic.BasicAlgorithm;
 import de.lsem.process.model.BagOfWords;
@@ -14,7 +14,7 @@ import de.lsem.process.model.ProcessModel;
 import de.lsem.process.model.ProcessNode;
 
 /*
- * Copyright (c) 2013 Christopher Klinkmï¿½ller
+ * Copyright (c) 2013 Christopher Klinkmüller
  * 
  * This software is released under the terms of the
  * MIT license. See http://opensource.org/licenses/MIT
@@ -25,8 +25,8 @@ public class NeighborhoodAlgorithm extends BasicAlgorithm {
 	protected double weight;
 	protected NeighborhoodDetermination neighborhoodDetermination;
 	
-	public NeighborhoodAlgorithm(MatrixCalculator<BagOfWords> matrixCalculator, NeighborhoodDetermination neighborhoodDetermination, double threshold, double distanceWeight) {
-		super(matrixCalculator, threshold);
+	public NeighborhoodAlgorithm(ObjectComparer<BagOfWords> comparer, NeighborhoodDetermination neighborhoodDetermination, double threshold, double distanceWeight) {
+		super(comparer, threshold);
 		this.weight = distanceWeight;
 		this.neighborhoodDetermination = neighborhoodDetermination;
 	}
