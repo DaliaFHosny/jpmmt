@@ -69,10 +69,13 @@ public class EvaluationMeasures {
 	}
 
 	public void add(int tp, int fp, int fn) {
-		System.out.println("TP: " + tp + "\tFP: " + fp + "\tFN: " + fn);
 		this.tps.add(tp);
 		this.fps.add(fp);
 		this.fns.add(fn);
+	}
+	
+	public int getNumberOfDatasets() {
+		return this.tps.size();
 	}
 
 	public void calculate() {
