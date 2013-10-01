@@ -32,16 +32,10 @@ import de.lsem.process.model.ProcessNode;
 public class BasicAlgorithm extends MappingAlgorithm {
 	private double matchThreshold = 0.75;
 	private MatrixCalculator<BagOfWords> matrixCalculator;
-	private ProcessMappingManager processMappingManager;
-	
-	protected ProcessMappingManager getProcessMappingManager() {
-		return this.processMappingManager ;
-	}
 	
 	public BasicAlgorithm(ObjectComparer<BagOfWords> comparer, double threshold) {
 		this.matrixCalculator = new MatrixCalculator<BagOfWords>(comparer);
 		this.matchThreshold = threshold;
-		this.processMappingManager = new ProcessMappingManager();
 	}
 	
 	public MatrixCalculator<BagOfWords> getMatrixCalculator() {
@@ -77,7 +71,6 @@ public class BasicAlgorithm extends MappingAlgorithm {
 				for (ProcessNode node2 : selectedMatch.getObject2().getNodes()) {
 					Match<ProcessNode> match = new Match<ProcessNode>(node1, node2);
 					this.addMatchToProcessMapping(processMapping, match);					
-					//this.processMappingManager.addNodeMatch(match, processMapping);
 				}
 			}
 			matches.remove(i);
