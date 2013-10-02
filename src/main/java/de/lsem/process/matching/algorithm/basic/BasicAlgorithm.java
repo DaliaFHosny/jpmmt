@@ -10,7 +10,6 @@ import de.lsem.matrix.ObjectComparer;
 import de.lsem.process.matching.Fragment;
 import de.lsem.process.matching.FragmentMatch;
 import de.lsem.process.matching.ProcessMapping;
-import de.lsem.process.matching.ProcessMappingManager;
 import de.lsem.process.matching.algorithm.MappingAlgorithm;
 import de.lsem.process.model.BagOfWords;
 import de.lsem.process.model.ProcessModel;

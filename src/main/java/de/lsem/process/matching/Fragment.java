@@ -45,4 +45,8 @@ public class Fragment {
 	public boolean containsProcessNode(ProcessNode processNode) {
 		return this.nodes.contains(processNode);
 	}
+	
+	public int getProcessNodesSize() {
+		return this.nodes.size();
+	}
 }
