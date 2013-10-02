@@ -11,13 +11,18 @@ import de.lsem.process.model.ProcessModel;
 import de.lsem.process.model.ProcessNode;
 
 /*
- * Copyright (c) 2013 Christopher Klinkmï¿½ller
+ * Copyright (c) 2013 Christopher Klinkmüller
  * 
  * This software is released under the terms of the
  * MIT license. See http://opensource.org/licenses/MIT
  * for more information.
  */
 
+/**
+ * 
+ * @author Christopher Klinkmüller
+ *
+ */
 public abstract class NeighborhoodDetermination {
 	protected HashMap<String, Matrix<BagOfWords>> distances;
 	

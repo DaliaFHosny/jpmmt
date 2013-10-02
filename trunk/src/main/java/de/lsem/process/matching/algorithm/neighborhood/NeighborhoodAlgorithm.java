@@ -8,6 +8,7 @@ import de.lsem.matrix.Match;
 import de.lsem.matrix.Matrix;
 import de.lsem.matrix.ObjectComparer;
 import de.lsem.process.matching.ProcessMapping;
+import de.lsem.process.matching.ProcessMappingManager;
 import de.lsem.process.matching.algorithm.basic.BasicAlgorithm;
 import de.lsem.process.model.BagOfWords;
 import de.lsem.process.model.ProcessModel;
@@ -24,11 +25,13 @@ import de.lsem.process.model.ProcessNode;
 public class NeighborhoodAlgorithm extends BasicAlgorithm {
 	protected double weight;
 	protected NeighborhoodDetermination neighborhoodDetermination;
+	private ProcessMappingManager manager;
 	
 	public NeighborhoodAlgorithm(ObjectComparer<BagOfWords> comparer, NeighborhoodDetermination neighborhoodDetermination, double threshold, double distanceWeight) {
 		super(comparer, threshold);
 		this.weight = distanceWeight;
 		this.neighborhoodDetermination = neighborhoodDetermination;
+		this.manager = new ProcessMappingManager();
 	}
 
 	@Override
@@ -42,7 +45,7 @@ public class NeighborhoodAlgorithm extends BasicAlgorithm {
 			for (ProcessNode node1 : selectedMatch.getObject1().getNodes()) {
 				for (ProcessNode node2 : selectedMatch.getObject2().getNodes()) {
 					Match<ProcessNode> match = new Match<ProcessNode>(node1, node2);
-					this.getProcessMappingManager().addNodeMatch(match, processMapping);
+					this.manager.addNodeMatch(match, processMapping);
 				}
 			}
 			this.updateMatchList(matches, sim, selectedMatch);			
