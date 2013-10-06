@@ -1,7 +1,6 @@
 package de.lsem.process.io.epml;
 
-import java.util.ArrayList;
-import java.util.List;
+import de.lsem.process.model.ProcessModel;
 
 /*
  * Copyright (c) 2013 Christopher Klinkmüller
@@ -11,137 +10,44 @@ import java.util.List;
  * for more information.
  */
 
-class EventDrivenProcessChain {
-	private String id;
-	private List<Node> nodes;
-	private List<Arc> arcs;
-	
-	public EventDrivenProcessChain(String id) {
-		this.nodes = new ArrayList<Node>();
-		this.arcs = new ArrayList<Arc>();
-		this.id = id;
+class EventDrivenProcessChain extends ProcessModel {
+	public EventDrivenProcessChain() {
+		super();
 	}
 	
-	public String getId() {
-		return this.id;
+	public EventDrivenProcessChain(String id, String name) {
+		super(id, name);
 	}
 	
-	public void setId(String id) {
-		this.id = id;
+	public EventDrivenProcessChainNode addFunction(String id, String label) {
+		return this.addEventDrivenProcessChainNode(id, label, EventDrivenProcessChainNode.FUNCTION);
 	}
 	
-	public void addArc(Arc arc) {
-		this.arcs.add(arc);
+	public EventDrivenProcessChainNode addEvent(String id, String label) {
+		return this.addEventDrivenProcessChainNode(id, label, EventDrivenProcessChainNode.EVENT);
 	}
 	
-	public void removeArc(Arc arc) {
-		this.arcs.remove(arc);
+	public EventDrivenProcessChainNode addXorConnector(String id, String label) {
+		return this.addEventDrivenProcessChainNode(id, label, EventDrivenProcessChainNode.XOR_CONNECTOR);
 	}
 	
-	public int arcsSize() {
-		return this.arcs.size();
+	public EventDrivenProcessChainNode addAndConnector(String id, String label) {
+		return this.addEventDrivenProcessChainNode(id, label, EventDrivenProcessChainNode.AND_CONNECTOR);
 	}
 	
-	public Arc getArc(int index) {
-		return this.arcs.get(index);
+	public EventDrivenProcessChainNode addORConnector(String id, String label) {
+		return this.addEventDrivenProcessChainNode(id, label, EventDrivenProcessChainNode.OR_CONNECTOR);
 	}
 	
-	public Iterable<Arc> getArcs() {
-		return this.arcs;
+	public EventDrivenProcessChainNode addEventDrivenProcessChainNode(String id, String label, String type) {
+		EventDrivenProcessChainNode node = new EventDrivenProcessChainNode(this, id, label, type);
+		this.addNode(node);
+		return node;
 	}
-	
-	public void addNode(Node node) {
-		this.nodes.add(node);
-	}
-	
-	public void removeNode(Node node) {
-		this.nodes.add(node);
-	}
-	
-	public int nodesSize() {
-		return this.nodes.size();
-	}
-	
-	public Node getNode(int index) {
-		return this.nodes.get(index);
-	}
-	
-	public Iterable<Node> getNodes() {
-		return this.nodes;
-	}
-	
-	private static abstract class Element {
-		private String id;
-		private String label;
 		
-		public String getId() {
-			return id;
-		}
-		
-		public void setId(String id) {
-			this.id = id;
-		}
-		
-		public String getLabel() {
-			return label;
-		}
-		
-		public void setLabel(String label) {
-			this.label = label;
-		}		
-	}
-	
-	public static class Node extends Element {
-		private NodeType type;
-		
-		public Node(String id, String label, NodeType type) {
-			this.setId(id);
-			this.setLabel(label);
-			this.setType(type);
-		}
-		
-		public NodeType getType() {
-			return this.type;
-		}
-		
-		public void setType(NodeType type) {
-			this.type = type;
-		}
-	}
-	
-	public enum NodeType {
-		EVENT,
-		FUNCTION,
-		OPERATOR_AND,
-		OPERATOR_OR,
-		OPERATOR_XOR
-	}
-	
-	public static class Arc extends Element {
-		private Node source;
-		private Node target;
-		
-		public Arc(String id, String label, Node source, Node target) {
-			this.setSource(source);
-			this.setTarget(target);
-			this.setId(id);
-			this.setLabel(label);
-		}
-		
-		public Node getSource() {
-			return source;
-		}
-		
-		private void setSource(Node source) {
-			this.source = source;
-		}
-		
-		public Node getTarget() {
-			return target;
-		}
-		
-		private void setTarget(Node target) {
-			this.target = target;
-		}		
+	public EventDrivenProcessChainArc addEventDrivenProcessChainArc(String id, String name, EventDrivenProcessChainNode source, EventDrivenProcessChainNode target) {
+		EventDrivenProcessChainArc arc = new EventDrivenProcessChainArc(this, id, name, source, target);
+		this.addEdge(arc);
+		return arc;
 	}
 }
