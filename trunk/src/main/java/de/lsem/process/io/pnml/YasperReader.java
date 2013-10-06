@@ -1,4 +1,4 @@
-package de.lsem.process.io.yasper;
+package de.lsem.process.io.pnml;
 
 import de.lsem.process.io.ProcessModelReader;
 import de.lsem.process.model.ProcessModel;
