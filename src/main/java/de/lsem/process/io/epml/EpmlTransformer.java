@@ -1,59 +1,84 @@
 package de.lsem.process.io.epml;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 
+import de.lsem.process.model.ProcessEdge;
 import de.lsem.process.model.ProcessModel;
 import de.lsem.process.model.ProcessNode;
 
 /*
- * Copyright (c) 2013 Christopher Klinkmï¿½ller
+ * Copyright (c) 2013 Christopher Klinkmüller
  * 
  * This software is released under the terms of the
  * MIT license. See http://opensource.org/licenses/MIT
  * for more information.
  */
 
+/**
+ * 
+ * @author Christopher Klinkmüller
+ *
+ */
 class EpmlTransformer {
 
 	public ProcessModel transform(EventDrivenProcessChain chain) {
-		ProcessModel model = this.createModel(chain);
-		HashMap<String, ProcessNode> nodes = new HashMap<String, ProcessNode>();
-		this.transformNodes(chain, model, nodes);		
-		this.transformArcs(chain, model, nodes);
-		return model;
+		this.removeEvents(chain);
+		this.transformNodes(chain);
+		return chain;
 	}
-
-	private void transformArcs(EventDrivenProcessChain chain, ProcessModel model, HashMap<String, ProcessNode> nodes) {
-		for (EventDrivenProcessChain.Arc arc : chain.getArcs()) {
-			ProcessNode source = nodes.get(arc.getSource().getId());
-			ProcessNode target = nodes.get(arc.getTarget().getId());
-			model.addEdge(arc.getId(), arc.getLabel(), source, target);
-		}		
-	}
-
-	private void transformNodes(EventDrivenProcessChain chain, ProcessModel model, HashMap<String, ProcessNode> nodes) {
-		for (EventDrivenProcessChain.Node node : chain.getNodes()) {
-			String type = ProcessNode.UNKNOWN;
-			
-			switch (node.getType()) {
-				case EVENT : type = ProcessNode.UNKNOWN; break;
-				case FUNCTION : type = ProcessNode.ACTIVITY; break;
-				case OPERATOR_AND : type = ProcessNode.PARALLEL_GATEWAY; break;
-				case OPERATOR_OR : type = ProcessNode.GATEWAY; break;
-				case OPERATOR_XOR : type = ProcessNode.EXCLUSIVE_GATEWAY; break;
-				default : type = ProcessNode.UNKNOWN; break; 
+	
+	private void transformNodes(EventDrivenProcessChain chain) {
+		for (ProcessNode node : chain.getNodes()) {
+			EventDrivenProcessChainNode epcNode = (EventDrivenProcessChainNode)node;
+			if (epcNode.isFunction()) {
+				epcNode.setType(ProcessNode.ACTIVITY);
 			}
-			
-			nodes.put(node.getId(), model.addNode(node.getId(), node.getLabel(), type));
+			else if (epcNode.isAndConnector()) {
+				epcNode.setType(ProcessNode.PARALLEL_GATEWAY);
+			}
+			else if (epcNode.isXorConnector()) {
+				epcNode.setType(ProcessNode.EXCLUSIVE_GATEWAY);
+			}
+			else if (epcNode.isOrConnector()) {
+				epcNode.setType(ProcessNode.GATEWAY);
+			}
+		}
+	}
+
+	private void removeEvents(EventDrivenProcessChain chain) {
+		List<EventDrivenProcessChainNode> events = new ArrayList<EventDrivenProcessChainNode>();
+		for (ProcessNode node : chain.getNodes()) {
+			EventDrivenProcessChainNode epcNode = (EventDrivenProcessChainNode)node;
+			if (epcNode.isEvent()) {
+				events.add(epcNode);
+			}
 		}
 		
+		for (EventDrivenProcessChainNode event : events) {
+			EventDrivenProcessChainArc source = null;
+			for (ProcessEdge edge : chain.getEdgesWithTarget(event)) {
+				source = (EventDrivenProcessChainArc)edge;
+			}
+			
+			EventDrivenProcessChainArc target = null;
+			for (ProcessEdge edge : chain.getEdgesWithSource(event)) {
+				target = (EventDrivenProcessChainArc)edge;
+			}
+			
+			if (target != null) {
+				chain.removeEdge(target);
+			}
+			if (source != null) {
+				chain.removeEdge(source);
+			}
+			chain.removeNode(event);
+			
+			if (target != null && source != null) {
+				chain.addEventDrivenProcessChainArc(source.getId() + "_" + target.getId(), "", 
+						(EventDrivenProcessChainNode)source.getSource(),
+						(EventDrivenProcessChainNode)target.getTarget());
+			}
+		}
 	}
-
-	private ProcessModel createModel(EventDrivenProcessChain chain) {
-		ProcessModel model = new ProcessModel();
-		model.setId(chain.getId());
-		model.setName(chain.getId());
-		return model;
-	}
-
 }

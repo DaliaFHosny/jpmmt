@@ -13,11 +13,10 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import de.lsem.process.io.epml.EventDrivenProcessChain.Node;
-import de.lsem.process.io.epml.EventDrivenProcessChain.NodeType;
+import de.lsem.process.model.GraphicalInformation;
 
 /*
- * Copyright (c) 2013 Christopher Klinkmï¿½ller
+ * Copyright (c) 2013 Christopher Klinkmüller
  * 
  * This software is released under the terms of the
  * MIT license. See http://opensource.org/licenses/MIT
@@ -26,15 +25,15 @@ import de.lsem.process.io.epml.EventDrivenProcessChain.NodeType;
 
 class EpmlImporter {
 	private DocumentBuilder documentBuilder;
-	private static HashMap<EventDrivenProcessChain.NodeType, String> types;
+	private static HashMap<String, String> types;
 	
 	static {
-		types = new HashMap<EventDrivenProcessChain.NodeType, String>();
-		types.put(NodeType.EVENT, "event");
-		types.put(NodeType.FUNCTION, "function");
-		types.put(NodeType.OPERATOR_AND, "and");
-		types.put(NodeType.OPERATOR_OR, "or");
-		types.put(NodeType.OPERATOR_XOR, "xor");
+		types = new HashMap<String, String>();
+		types.put(EventDrivenProcessChainNode.EVENT, "event");
+		types.put(EventDrivenProcessChainNode.FUNCTION, "function");
+		types.put(EventDrivenProcessChainNode.AND_CONNECTOR, "and");
+		types.put(EventDrivenProcessChainNode.OR_CONNECTOR, "or");
+		types.put(EventDrivenProcessChainNode.XOR_CONNECTOR, "xor");
 	}
 	
 	public EpmlImporter() {
@@ -49,33 +48,30 @@ class EpmlImporter {
 
 	public EventDrivenProcessChain importEpc (String filename) {
 		Element root = this.readDocument(filename);
-		HashMap<String, EventDrivenProcessChain.Node> epcNodes = new HashMap<String, EventDrivenProcessChain.Node>();
+		HashMap<String, EventDrivenProcessChainNode> epcNodes = new HashMap<String, EventDrivenProcessChainNode>();
 		
 		EventDrivenProcessChain epc = this.readEpc(root, filename);
-		this.readNodes(EventDrivenProcessChain.NodeType.EVENT, root, epc, epcNodes);
-		this.readNodes(EventDrivenProcessChain.NodeType.FUNCTION, root, epc, epcNodes);
-		this.readNodes(EventDrivenProcessChain.NodeType.OPERATOR_AND, root, epc, epcNodes);
-		this.readNodes(EventDrivenProcessChain.NodeType.OPERATOR_OR, root, epc, epcNodes);
-		this.readNodes(EventDrivenProcessChain.NodeType.OPERATOR_XOR, root, epc, epcNodes);
+		for (String type : types.keySet()) {
+			this.readNodes(type, root, epc, epcNodes);
+		}
 		this.readArcs(root, epc, epcNodes);
 		
 		return epc;
 	}
 	
-	private void readArcs(Element root, EventDrivenProcessChain epc, HashMap<String, EventDrivenProcessChain.Node> epcNodes) {
+	private void readArcs(Element root, EventDrivenProcessChain epc, HashMap<String, EventDrivenProcessChainNode> epcNodes) {
 		NodeList list = root.getElementsByTagName("arc");
 		for (int a = 0; a < list.getLength(); a++) {
 			Element arcElement = (Element)list.item(a);
 			String id = arcElement.getAttribute("id");
 			Element flowElement = (Element)arcElement.getElementsByTagName("flow").item(0);
-			EventDrivenProcessChain.Arc arc = new EventDrivenProcessChain.Arc(id, "", 
+			epc.addEventDrivenProcessChainArc(id, "", 
 					epcNodes.get(flowElement.getAttribute("source")), 
 					epcNodes.get(flowElement.getAttribute("target")));
-			epc.addArc(arc);
 		}
 	}
 
-	private void readNodes(NodeType type, Element root, EventDrivenProcessChain epc, HashMap<String, Node> epcNodes) {
+	private void readNodes(String type, Element root, EventDrivenProcessChain epc, HashMap<String, EventDrivenProcessChainNode> epcNodes) {
 		NodeList list = root.getElementsByTagName(types.get(type));
 		for (int a = 0; a < list.getLength(); a++) {
 			Element element = (Element)list.item(a);
@@ -84,17 +80,22 @@ class EpmlImporter {
 			
 			Element labelElement = (Element)element.getElementsByTagName("name").item(0);
 			if (labelElement != null) {
-				label = labelElement.getTextContent();
-//				label = label.replace('\n', ' ').replace("\\n", " ");
-//				label = label.replace("-", " ");
-//				label = label.replace("?", "");
-				label = label.replace("\\n", " ").replaceAll("[^A-Za-z0-9_]", " ").toLowerCase();
-				System.out.println(label);
+				label = labelElement.getTextContent().toLowerCase();
 			}
 			
-			EventDrivenProcessChain.Node node = new EventDrivenProcessChain.Node(id, label, type);
-			epc.addNode(node);
+			EventDrivenProcessChainNode node = epc.addEventDrivenProcessChainNode(id, label, type);
 			epcNodes.put(id, node);
+			
+			Element graphicsElement = (Element)element.getElementsByTagName("graphics").item(0);
+			if (graphicsElement != null) {
+				Element positionElement = (Element)graphicsElement.getElementsByTagName("position").item(0);
+				double x = Double.parseDouble(positionElement.getAttribute("x"));
+				double y = Double.parseDouble(positionElement.getAttribute("y"));
+				double width = Double.parseDouble(positionElement.getAttribute("width"));
+				double height = Double.parseDouble(positionElement.getAttribute("height"));
+				node.setGraphicalInformation(new GraphicalInformation(x, y, height, width));
+			}
+			
 		}
 	}
 
@@ -104,7 +105,7 @@ class EpmlImporter {
 		int begin = (index1 > index2 ? index1 : index2) + 1;
 		String name = filename.substring(begin, begin + (filename.length() - begin));
 		
-		EventDrivenProcessChain chain = new EventDrivenProcessChain(name);		
+		EventDrivenProcessChain chain = new EventDrivenProcessChain(name, name);
 		return chain;
 	}
 
