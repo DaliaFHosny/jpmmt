@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <Configuration>
-	<WordNet dictionaryFolder="D:/Coding/WordNet/dict"/>
+	<WordNet dictionaryFolder="D:/Workspaces/WNdb-3.0/dict"/>
 	<StopWords>
 		<StopWord>they</StopWord>
 		<StopWord>said</StopWord>

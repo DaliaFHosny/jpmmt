@@ -1,4 +1,4 @@
-package de.lsem.process.io.yasper;
+package de.lsem.process.io.pnml;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,6 +13,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+
+import de.lsem.process.model.GraphicalInformation;
 
 /*
  * Copyright (c) 2013 Christopher Klinkmüller
@@ -40,7 +42,7 @@ class YasperImporter {
 		
 		PetriNet net = this.readNet(rootElement, filename);
 		
-		HashMap<String, PetriNet.NetNode> nodes = new HashMap<String, PetriNet.NetNode>();
+		HashMap<String, PetriNetNode> nodes = new HashMap<String, PetriNetNode>();
 		this.readNodes(net, rootElement.getElementsByTagName("place"), true, nodes);
 		this.readNodes(net, rootElement.getElementsByTagName("transition"), false, nodes);
 		this.readArcs(net, rootElement.getElementsByTagName("arc"), nodes);
@@ -48,17 +50,17 @@ class YasperImporter {
 		return net;
 	}
 	
-	private void readArcs(PetriNet net, NodeList elements,	HashMap<String, de.lsem.process.io.yasper.PetriNet.NetNode> nodes) {
+	private void readArcs(PetriNet net, NodeList elements,	HashMap<String, PetriNetNode> nodes) {
 		for (int a = 0; a < elements.getLength(); a++) {
 			Element element = (Element)elements.item(a);
 			String id = element.getAttribute("id");
 			String source = element.getAttribute("source");
 			String target = element.getAttribute("target");
-			net.addArc(id, nodes.get(source), nodes.get(target));
+			net.addPetriNetArc(id, "", nodes.get(source), nodes.get(target));
 		}
 	}
 
-	private void readNodes(PetriNet net, NodeList elements, boolean isPlace, HashMap<String, de.lsem.process.io.yasper.PetriNet.NetNode> nodes) {
+	private void readNodes(PetriNet net, NodeList elements, boolean isPlace, HashMap<String, PetriNetNode> nodes) {
 		for (int a = 0; a < elements.getLength(); a++) {
 			Element element = (Element)elements.item(a);
 			String id = element.getAttribute("id");
@@ -71,11 +73,26 @@ class YasperImporter {
 					name = textElement.getTextContent().toLowerCase();
 				}
 			}
+			
+			PetriNetNode node = null;
 			if (isPlace) {
-				nodes.put(id, net.addPlace(id, name));
+				node =  net.addPlace(id, name);
 			}
 			else {
-				nodes.put(id, net.addTransition(id, name));
+				node = net.addTransition(id, name);
+			}
+			nodes.put(id, node);
+			
+			Element graphicsElement = (Element)element.getElementsByTagName("graphics").item(0);
+			if (graphicsElement != null) {
+				Element positionElement = (Element)element.getElementsByTagName("position").item(0);
+				Element dimensionElement = (Element)element.getElementsByTagName("dimension").item(0);
+				GraphicalInformation information = new GraphicalInformation(
+						Double.parseDouble(positionElement.getAttribute("x")),
+						Double.parseDouble(positionElement.getAttribute("y")),
+						Double.parseDouble(dimensionElement.getAttribute("x")),
+						Double.parseDouble(dimensionElement.getAttribute("y")));
+				node.setGraphicalInformation(information);
 			}
 		}
 	}

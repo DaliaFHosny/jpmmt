@@ -19,6 +19,7 @@ public class ProcessNode {
 	public static final String GATEWAY = "gateway";
 	public static final String UNKNOWN = "unknown";
 	
+	private GraphicalInformation graphicalInformation;
 	private String id;
 	private String label;
 	private String type;
@@ -100,16 +101,11 @@ public class ProcessNode {
 	}
 	
 	/**
-	 * Sets the type of the current node object. If the type does not equal to one of the types specified in the static members it will set the type to "unknown".
+	 * Sets the type of the current node object.
 	 * @param type the type current node object
 	 */
 	public void setType(String type) {
-		if (!(type.equals(ACTIVITY) || type.equals(PARALLEL_GATEWAY) || type.equals(EXCLUSIVE_GATEWAY) || type.equals(GATEWAY))) {
-			this.type = UNKNOWN;
-		}
-		else {
-			this.type = type;
-		}
+		this.type = type;
 	}
 	
 	/**
@@ -123,5 +119,28 @@ public class ProcessNode {
 	@Override
 	public String toString() {
 		return this.type.equals(ACTIVITY) ? (this.label.equals("") ? this.type : "\"" + this.label + "\"") : this.type;
+	}
+	
+	public void setGraphicalInformation(GraphicalInformation graphicalInformation) {
+		this.graphicalInformation = graphicalInformation;
+	}
+	
+	public GraphicalInformation getGraphicalInformation() {
+		return this.graphicalInformation;
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null || !obj.getClass().isAssignableFrom(ProcessNode.class)) {
+			return false;
+		}
+		ProcessNode node = (ProcessNode)obj;
+		if (this.id.equals(node.getId()) && node.getModel() != null && this.getModel() != null && 
+			this.model.getId().equals(node.getModel().getId())) {
+			return true;
+		}
+			
+		
+		return false;
 	}
 }

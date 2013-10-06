@@ -1,6 +1,7 @@
 package de.lsem.process.model;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -14,25 +15,26 @@ import java.util.Set;
  * for more information.
  */
 
-
 public class ProcessModel {
 	private String name;
 	private String id;
 	private Map<ProcessNode, Set<ProcessEdge>> edgesWithSource;
 	private Map<ProcessNode, Set<ProcessEdge>> edgesWithTarget;
-	private Map<String, ProcessNode> nodes;
+	private Map<String, ProcessNode> nodeIds;
 	private Map<String, ProcessEdge> edges;
+	private Set<ProcessNode> nodes;
 	
 	/**
 	 * Default constructor sets all members to default values.
 	 */
 	public ProcessModel() {
-		this.nodes = new HashMap<String, ProcessNode>();
+		this.nodeIds = new HashMap<String, ProcessNode>();
 		this.edges = new HashMap<String, ProcessEdge>();	
 		this.edgesWithSource = new HashMap<ProcessNode, Set<ProcessEdge>>();
 		this.edgesWithTarget = new HashMap<ProcessNode, Set<ProcessEdge>>();
 		this.name = "";
 		this.id = "";
+		this.nodes = new HashSet<ProcessNode>();
 	}
 	
 	public ProcessModel(String id, String name) {
@@ -59,8 +61,8 @@ public class ProcessModel {
 	
 	public ProcessEdge addEdge(String id, String label, ProcessNode source, ProcessNode target) {
 		if (id == null || label == null || source == null || target == null || 
-			this.edges.containsKey(id) || !this.nodes.containsKey(source.getId()) || 
-			!this.nodes.containsKey(target.getId())) {
+			this.edges.containsKey(id) || !this.nodeIds.containsKey(source.getId()) || 
+			!this.nodeIds.containsKey(target.getId())) {
 			return null;
 		}
 		
@@ -72,38 +74,42 @@ public class ProcessModel {
 		return edge;
 	}
 	
+	public ProcessEdge addEdge(ProcessEdge edge) {
+		this.edges.put(edge.getId(), edge);
+		this.edgesWithSource.get(edge.getSource()).add(edge);
+		this.edgesWithTarget.get(edge.getTarget()).add(edge);
+		return edge;
+	}
+	
 	public ProcessNode addNode(String id, String label, String type) {
-		if (id == null || label == null || this.nodes.containsKey(id)) {
+		if (id == null || label == null || this.nodeIds.containsKey(id)) {
 			return null;
 		}
 		
 		ProcessNode node = new ProcessNode(this, id, label, type);
-		this.nodes.put(id, node);
+		this.nodeIds.put(id, node);
 		this.edgesWithSource.put(node, new HashSet<ProcessEdge>());
 		this.edgesWithTarget.put(node, new HashSet<ProcessEdge>());
+		this.nodes.add(node);
 		
 		return node;
 	}
 	
 	public void addNode(ProcessNode node) {
-		this.nodes.put(node.getId(), node);
+		this.nodeIds.put(node.getId(), node);
 		this.edgesWithSource.put(node, new HashSet<ProcessEdge>());
 		this.edgesWithTarget.put(node, new HashSet<ProcessEdge>());
+		this.nodes.add(node);
 	}
 	
-	public Set<ProcessNode> getNodes() {
-		HashSet<ProcessNode> nodes = new HashSet<ProcessNode>();
-		
-		for (String key : this.nodes.keySet()) {
-			nodes.add(this.nodes.get(key));
-		}
-		
-		return nodes;
+	public Collection<ProcessNode> getNodes() {
+		return Collections.unmodifiableSet(this.nodes);
 	}
 
 	public void removeNode(ProcessNode node) {
-		if (node != null && this.nodes.containsKey(node.getId())) {
-			this.nodes.remove(node.getId());
+		if (node != null && this.nodeIds.containsKey(node.getId())) {
+			this.nodeIds.remove(node.getId());
+			this.nodes.remove(node);
 			for (ProcessEdge edge : this.getEdgesWithNode(node)) {
 				this.removeEdge(edge);
 			}
@@ -113,8 +119,8 @@ public class ProcessModel {
 	public void removeEdge(ProcessEdge edge) {
 		if (edge != null && this.edges.containsKey(edge.getId())) {
 			this.edges.get(edge.getId());
-			this.edgesWithSource.remove(edge.getSource());
-			this.edgesWithTarget.remove(edge.getTarget());
+			this.edgesWithSource.get(edge.getSource()).remove(edge);
+			this.edgesWithTarget.get(edge.getTarget()).remove(edge);
 		}
 	}
 	
@@ -179,9 +185,9 @@ public class ProcessModel {
 	public Set<ProcessNode> getActivities() {
 		HashSet<ProcessNode> activities = new HashSet<ProcessNode>();
 		
-		for (String key : nodes.keySet()) {
-			if (nodes.get(key).getType().equals(ProcessNode.ACTIVITY)) {
-				activities.add(nodes.get(key));
+		for (String key : nodeIds.keySet()) {
+			if (nodeIds.get(key).getType().equals(ProcessNode.ACTIVITY)) {
+				activities.add(nodeIds.get(key));
 			}
 		}
 		
@@ -189,9 +195,9 @@ public class ProcessModel {
 	}
 	
 	public void traverseActivities(NodeVisitor visitor) {
-		for (String key : nodes.keySet()) {
-			if (nodes.get(key).getType().equals(ProcessNode.ACTIVITY)) {
-				visitor.visit(nodes.get(key));
+		for (String key : nodeIds.keySet()) {
+			if (nodeIds.get(key).getType().equals(ProcessNode.ACTIVITY)) {
+				visitor.visit(nodeIds.get(key));
 			}
 		}
 	}
