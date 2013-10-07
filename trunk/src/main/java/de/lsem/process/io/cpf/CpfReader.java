@@ -17,7 +17,7 @@ public class CpfReader extends ProcessModelReader {
 	}
 	
 	@Override
-	public ProcessModel read(String filename) {
+	protected ProcessModel readModel(String filename) {
 		// TODO Auto-generated method stub
 		return null;
 	}

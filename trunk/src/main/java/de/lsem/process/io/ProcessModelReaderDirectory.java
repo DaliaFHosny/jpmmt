@@ -26,7 +26,15 @@ public class ProcessModelReaderDirectory {
 		return new EpmlReader();
 	}
 	
+	public static ProcessModelReader getEpmlReader(boolean removeMultipleEntries, boolean removeMultipleExits) {
+		return new EpmlReader(removeMultipleEntries, removeMultipleExits);
+	}
+	
 	public static ProcessModelReader getYasperPnmlReader() {
 		return new YasperReader();
+	}
+	
+	public static ProcessModelReader getYasperPnmlReader(boolean removeMultipleEntries, boolean removeMultipleExits) {
+		return new YasperReader(removeMultipleEntries, removeMultipleExits);
 	}
 }

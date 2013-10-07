@@ -45,7 +45,7 @@ public class JsonBpmnReader extends ProcessModelReader {
 	}
 
 	@Override
-	public ProcessModel read(String filename) {
+	protected ProcessModel readModel(String filename) {
 		try {
 			JsonObject object = this.readFile(filename);
 			return this.convert(object);

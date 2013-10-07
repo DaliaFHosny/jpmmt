@@ -19,11 +19,43 @@ import de.lsem.process.model.ProcessNode;
  */
 
 public abstract class ProcessModelReader {
+	private boolean removeMultipleExits;
+	private boolean removeMultipleEntries;
+	
 	public ProcessModelReader() {
-		
+		this.removeMultipleEntries = false;
+		this.removeMultipleExits = false;
 	}
 	
-	public abstract ProcessModel read(String filename); 
+	public ProcessModelReader(boolean removeMultipleEntries, boolean removeMultipleExits) {
+		this.removeMultipleEntries = removeMultipleEntries;
+		this.removeMultipleExits = removeMultipleExits;
+	}	
+	
+	public boolean isRemoveMultipleExits() {
+		return this.removeMultipleExits;
+	}
+
+	public void setRemoveMultipleExits(boolean removeMultipleExits) {
+		this.removeMultipleExits = removeMultipleExits;
+	}
+
+	public boolean isRemoveMultipleEntries() {
+		return this.removeMultipleEntries;
+	}
+
+	public void setRemoveMultipleEntries(boolean removeMultipleEntries) {
+		this.removeMultipleEntries = removeMultipleEntries;
+	}
+
+	public final ProcessModel read(String filename) {
+		ProcessModel model = this.readModel(filename);
+		this.checkForMultipleEntries(model);
+		this.checkForMultipleExits(model);		
+		return model;
+	}
+	
+	protected abstract ProcessModel readModel(String filename);
 	
 	public List<ProcessModel> readModels(Collection<String> filenames) {
 		List<ProcessModel> models = new ArrayList<ProcessModel>();
@@ -47,35 +79,39 @@ public abstract class ProcessModelReader {
 	}
 	
 	protected void checkForMultipleExits(ProcessModel process) {
-		Set<ProcessNode> exits = new HashSet<ProcessNode>();
-		
-		for (ProcessNode node : process.getNodes()) {
-			if (process.getEdgesWithSource(node).size() == 0) {
-				exits.add(node);
+		if (this.removeMultipleExits) {
+			Set<ProcessNode> exits = new HashSet<ProcessNode>();
+			
+			for (ProcessNode node : process.getNodes()) {
+				if (process.getEdgesWithSource(node).size() == 0) {
+					exits.add(node);
+				}
 			}
-		}
-		
-		if (exits.size() > 1) {
-			ProcessNode end = process.addNode("endEvent", "", ProcessNode.GATEWAY);
-			for (ProcessNode exit : exits) {
-				process.addEdge("edge_" + exit.getId() + "_" + end.getId(), "", exit, end);
+			
+			if (exits.size() > 1) {
+				ProcessNode end = process.addNode("endEvent", "", ProcessNode.GATEWAY);
+				for (ProcessNode exit : exits) {
+					process.addEdge("edge_" + exit.getId() + "_" + end.getId(), "", exit, end);
+				}
 			}
 		}
 	}
 
 	protected void checkForMultipleEntries(ProcessModel process) {
-		Set<ProcessNode> entries = new HashSet<ProcessNode>();
-		
-		for (ProcessNode node : process.getNodes()) {
-			if (process.getEdgesWithTarget(node).size() == 0) {
-				entries.add(node);
+		if (this.removeMultipleEntries) {
+			Set<ProcessNode> entries = new HashSet<ProcessNode>();
+			
+			for (ProcessNode node : process.getNodes()) {
+				if (process.getEdgesWithTarget(node).size() == 0) {
+					entries.add(node);
+				}
 			}
-		}
-		
-		if (entries.size() > 1) {
-			ProcessNode start = process.addNode("startEvent", "", ProcessNode.GATEWAY);
-			for (ProcessNode entry : entries) {
-				process.addEdge("edge_" + start.getId() + "_" + entry.getId(), "", start, entry);
+			
+			if (entries.size() > 1) {
+				ProcessNode start = process.addNode("startEvent", "", ProcessNode.GATEWAY);
+				for (ProcessNode entry : entries) {
+					process.addEdge("edge_" + start.getId() + "_" + entry.getId(), "", start, entry);
+				}
 			}
 		}
 	}
