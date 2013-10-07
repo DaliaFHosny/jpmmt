@@ -144,6 +144,7 @@ class YasperImporter {
 		else {
 			net.setName(filename.substring(i1 + 1).replace(".pnml", ""));
 		}
+		net.setId(net.getName());
 	}
 
 	private Element readDocument(String filename) {

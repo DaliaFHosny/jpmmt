@@ -109,7 +109,6 @@ public class Matrix<T> {
 		
 		double sim = this.similarities[this.objectIds1.get(obj1)][this.objectIds2.get(obj2)];
 		sim = sim >= this.threshold ? sim : this.thresholdEquivalent;
-		//System.out.println(sim);
 		
 		return sim;
 	}

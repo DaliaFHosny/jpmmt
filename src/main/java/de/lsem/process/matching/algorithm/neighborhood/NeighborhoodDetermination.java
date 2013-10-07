@@ -37,10 +37,10 @@ public abstract class NeighborhoodDetermination {
 			this.addModelDistances(model, modelBags);
 		}
 		
-		return this.selectNeighbors(bag, this.distances.get(model.getId()), modelBags);
+		return this.selectNeighbors(bag, this.distances.get(model.getId()));
 	}
 	
-	protected abstract List<BagOfWords> selectNeighbors(BagOfWords bag, Matrix<BagOfWords> matrix, Collection<BagOfWords> modelBags);
+	protected abstract List<BagOfWords> selectNeighbors(BagOfWords bag, Matrix<BagOfWords> matrix);
 
 	protected abstract void addModelDistances(ProcessModel model, Collection<BagOfWords> modelBags);
 

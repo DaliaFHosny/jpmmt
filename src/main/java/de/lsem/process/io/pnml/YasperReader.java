@@ -16,16 +16,19 @@ public class YasperReader extends ProcessModelReader {
 	private PetriNetTransformation transformer;
 	
 	public YasperReader() {
+		this(false, false);
+	}
+	
+	public YasperReader(boolean removeMultipleEntries, boolean removeMultipleExits) {
+		super(removeMultipleEntries, removeMultipleExits);
 		this.importer = new YasperImporter();
 		this.transformer = new PetriNetTransformation();
 	}
 	
 	@Override
-	public ProcessModel read(String filename) {
+	protected ProcessModel readModel(String filename) {
 		PetriNet net = this.importer.importFile(filename);
 		ProcessModel process = this.transformer.transform(net);
-		this.checkForMultipleEntries(process);
-		this.checkForMultipleExits(process);
 		return process;
 	}
 

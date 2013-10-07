@@ -20,16 +20,17 @@ import de.lsem.process.model.ProcessNode;
  */
 
 public class DistanceNeighborhoodDetermination extends NeighborhoodDetermination {
-	private HashMap<String, Matrix<BagOfWords>> distances;
 	private double maxdistance;
 	
 	public DistanceNeighborhoodDetermination(int maxdistance) {
+		super();
 		this.maxdistance = maxdistance;
 	}
 	
 	@Override
 	protected void addModelDistances(ProcessModel model, Collection<BagOfWords> modelBags) {
 		Matrix<BagOfWords> bagOfWords = new Matrix<BagOfWords>(modelBags, modelBags, -1);
+		
 		this.distances.put(model.getId(), bagOfWords);
 		
 		HashMap<ProcessNode, Collection<BagOfWords>> nodes = this.getNodeMapping(modelBags);
@@ -57,7 +58,9 @@ public class DistanceNeighborhoodDetermination extends NeighborhoodDetermination
 		Matrix<ProcessNode> distances = new Matrix<ProcessNode>(nodes, nodes, -1);
 		
 		for (ProcessNode node : nodes) {
-			this.setDistances(distances, nodes, node, model);
+			if (node.isActivity()) {
+				this.setDistances(distances, nodes, node, model);
+			}
 		}
 		
 		return distances;
@@ -67,8 +70,10 @@ public class DistanceNeighborhoodDetermination extends NeighborhoodDetermination
 		HashMap<ProcessNode, Integer> dist = new HashMap<ProcessNode, Integer>();
 		List<ProcessNode> queue = new ArrayList<ProcessNode>();
 		for (ProcessNode n : nodes) {
-			dist.put(n, Integer.MAX_VALUE);
-			queue.add(n);
+			if (n.isActivity()) {
+				dist.put(n, Integer.MAX_VALUE);
+				queue.add(n);
+			}
 		}
 		dist.put(node, 0);
 		
@@ -80,14 +85,13 @@ public class DistanceNeighborhoodDetermination extends NeighborhoodDetermination
 				break;
 			}
 			
-			List<ProcessNode> neighbors = this.getNeighbors(model, nodes, small, queue, new ArrayList<ProcessNode>());
+			List<ProcessNode> neighbors = this.getNeighbors(model, small, queue, new ArrayList<ProcessNode>());
 			for (ProcessNode neighbor : neighbors) {
 				int alt = dist.get(small) + 1;
-				if (alt < dist.get(neighbor.getId())) {
+				if (alt < dist.get(neighbor)) {
 					dist.put(neighbor, alt);					
 				}
-			}
-			
+			}			
 		}
 		
 		for (ProcessNode n : nodes) {
@@ -95,22 +99,23 @@ public class DistanceNeighborhoodDetermination extends NeighborhoodDetermination
 		}
 	}
 
-	private List<ProcessNode> getNeighbors(ProcessModel model, Set<ProcessNode> modelNodes, ProcessNode cur, List<ProcessNode> queue, ArrayList<ProcessNode> visited) {
-		List<ProcessNode> nodes = new ArrayList<ProcessNode>();
-		visited.add(cur);
-		
-		for (ProcessNode node : model.getAdjacentNodes(cur)) {
-			if (modelNodes.contains(node)) {
-				if (queue.contains(node)) {
-					nodes.add(node);
+	private List<ProcessNode> getNeighbors(ProcessModel model, ProcessNode cur, List<ProcessNode> queue, List<ProcessNode> visited) {
+		List<ProcessNode> neighbors = new ArrayList<ProcessNode>();
+		if (!visited.contains(cur)) {
+			visited.add(cur);
+			for (ProcessNode node : model.getAdjacentNodes(cur)) {
+				if (node.isActivity()) {
+					visited.add(node);
+					if (queue.contains(node)) {
+						neighbors.add(node);
+					}
 				}
-				else if (!visited.contains(node)) {
-					this.getNeighbors(model, modelNodes, node, queue, visited);
+				else if (!node.isActivity()) {
+					neighbors.addAll(this.getNeighbors(model, node, queue, visited));
 				}
 			}
 		}
-		
-		return nodes;
+		return neighbors;
 	}
 
 	private ProcessNode getProcessNodeWithSmallestDistance(List<ProcessNode> queue, HashMap<ProcessNode, Integer> dist) {
@@ -128,10 +133,10 @@ public class DistanceNeighborhoodDetermination extends NeighborhoodDetermination
 	}
 
 	@Override
-	protected List<BagOfWords> selectNeighbors(BagOfWords bag, Matrix<BagOfWords> matrix, Collection<BagOfWords> modelBags) {
+	protected List<BagOfWords> selectNeighbors(BagOfWords bag, Matrix<BagOfWords> matrix) {
 		List<BagOfWords> neighbors = new ArrayList<BagOfWords>();
 		
-		for (BagOfWords modelBag : modelBags) {
+		for (BagOfWords modelBag : matrix.getObjects1()) {			
 			if (matrix.getValue(bag, modelBag) <= this.maxdistance) {
 				neighbors.add(modelBag);
 			}

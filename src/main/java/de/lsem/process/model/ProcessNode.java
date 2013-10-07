@@ -131,7 +131,7 @@ public class ProcessNode {
 	
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null || !obj.getClass().isAssignableFrom(ProcessNode.class)) {
+		if (obj == null || !ProcessNode.class.isAssignableFrom(obj.getClass())) {
 			return false;
 		}
 		ProcessNode node = (ProcessNode)obj;

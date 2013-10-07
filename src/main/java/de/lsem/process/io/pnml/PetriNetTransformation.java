@@ -1,6 +1,7 @@
 package de.lsem.process.io.pnml;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import de.lsem.process.model.GraphicalInformation;
@@ -27,29 +28,109 @@ class PetriNetTransformation {
 
 	private void transformGateways(PetriNet petriNet) {
 		List<PetriNetNode> splitMerge = new ArrayList<PetriNetNode>();
+		
+		ArrayList<ProcessNode> nodes = new ArrayList<ProcessNode>();
 		for (ProcessNode node : petriNet.getNodes()) {
+			nodes.add(node);
+		}
+		
+		for (ProcessNode node : nodes) {
 			PetriNetNode petriNetNode = (PetriNetNode)node;
 			int in = node.getModel().getEdgesWithTarget(node).size();
 			int out = node.getModel().getEdgesWithSource(node).size();
 			
 			// split or merge
-			if ((in < 2 && out > 1) || (in < 1 && out > 2)) {
+			if ((in < 2 && out > 1) || (in > 1 && out < 2)) {
 				if (petriNetNode.isPlace()) {
 					petriNetNode.setType(ProcessNode.EXCLUSIVE_GATEWAY);
 				}
 				else {
-					petriNetNode.setType(ProcessNode.PARALLEL_GATEWAY);
+					if (in > 1) {
+						petriNetNode.setType(ProcessNode.ACTIVITY);
+						this.transformTransitionToMerge(petriNetNode);
+					}
+					else {
+						petriNetNode.setType(ProcessNode.ACTIVITY);
+						this.transformTransitionToSplit(petriNetNode);
+					}
 				}
 			}
 			// split & merge
 			else if (in > 1 && out > 1) {
-				splitMerge.add(petriNetNode);
+				petriNetNode.setType(ProcessNode.ACTIVITY);
+				this.transformTransitionToMerge(petriNetNode);
+				this.transformTransitionToSplit(petriNetNode);
 			}
 		}
 		
 		for (PetriNetNode n: splitMerge) {
 			this.introduceSplitMerge(n);
 		}
+	}
+
+	private void transformTransitionToSplit(PetriNetNode petriNetNode) {
+		if (petriNetNode.getLabel() == null || petriNetNode.getLabel().equals("")) {
+			petriNetNode.setType(ProcessNode.PARALLEL_GATEWAY);
+		}
+		else {
+			ProcessModel model = petriNetNode.getModel();
+			ProcessNode node = model.addNode("split_" + petriNetNode.getId(), "", ProcessNode.PARALLEL_GATEWAY);
+			model.addEdge(petriNetNode.getId() + "->" + node.getId(), "", petriNetNode, node);
+			this.setGraphicalInformation(node, model.getTargetNodes(petriNetNode));
+			for (ProcessEdge edge : model.getEdgesWithSource(petriNetNode)) {
+				model.removeEdge(edge);
+				model.addEdge(edge.getId(), edge.getLabel(), node, edge.getTarget());
+			}
+		}
+	}
+
+	private void transformTransitionToMerge(PetriNetNode petriNetNode) {
+		if (petriNetNode.getLabel() == null || petriNetNode.getLabel().equals("")) {
+			petriNetNode.setType(ProcessNode.PARALLEL_GATEWAY);
+		}	
+		else {
+			ProcessModel model = petriNetNode.getModel();
+			ProcessNode node = model.addNode("merge_" + petriNetNode.getId(), "", ProcessNode.PARALLEL_GATEWAY);
+			model.addEdge(node.getId() + "->" + petriNetNode.getId(), "", node, petriNetNode);
+			this.setGraphicalInformation(node, model.getSourceNodes(petriNetNode));
+			for (ProcessEdge edge : model.getEdgesWithTarget(petriNetNode)) {
+				model.removeEdge(edge);
+				model.addEdge(edge.getId(), edge.getLabel(), edge.getSource(), node);
+			}
+		}
+	}
+	
+	private void setGraphicalInformation(ProcessNode node, Collection<ProcessNode> nodes) {
+		double minX = Double.MAX_VALUE,
+			   maxX = Double.MIN_VALUE,
+			   minY = Double.MAX_VALUE,
+			   maxY = Double.MIN_VALUE,
+			   width = Double.MIN_VALUE,
+			   height = Double.MIN_VALUE;
+			for (ProcessNode n : nodes) {
+				if (n.getGraphicalInformation() != null) {
+					if (minX > n.getGraphicalInformation().getX()) {
+						minX = n.getGraphicalInformation().getX();
+					}
+					if (maxX < n.getGraphicalInformation().getX()) {
+						maxX = n.getGraphicalInformation().getX();
+					}
+					if (minY > n.getGraphicalInformation().getY()) {
+						minY = n.getGraphicalInformation().getY();
+					}
+					if (maxY < n.getGraphicalInformation().getY()) {
+						maxY = n.getGraphicalInformation().getY();
+					}
+					if (width > n.getGraphicalInformation().getWidth()) {
+						width = n.getGraphicalInformation().getWidth();
+					}
+					if (height < n.getGraphicalInformation().getHeight()) {
+						height = n.getGraphicalInformation().getHeight();
+					}
+				}
+			}
+			
+			node.setGraphicalInformation(new GraphicalInformation(minX + (maxX - minX) / 2, minY + (maxY  - minY) / 2, height, width));			
 	}
 
 	private void introduceSplitMerge(PetriNetNode petriNetNode) {
@@ -64,19 +145,19 @@ class PetriNetTransformation {
 			if (minX > node.getGraphicalInformation().getX()) {
 				minX = node.getGraphicalInformation().getX();
 			}
-			else if (maxX < node.getGraphicalInformation().getX()) {
+			if (maxX < node.getGraphicalInformation().getX()) {
 				maxX = node.getGraphicalInformation().getX();
 			}
-			else if (minY > node.getGraphicalInformation().getY()) {
+			if (minY > node.getGraphicalInformation().getY()) {
 				minY = node.getGraphicalInformation().getY();
 			}
-			else if (maxY < node.getGraphicalInformation().getY()) {
+			if (maxY < node.getGraphicalInformation().getY()) {
 				maxY = node.getGraphicalInformation().getY();
 			}
-			else if (maxWidth > node.getGraphicalInformation().getWidth()) {
+			if (maxWidth > node.getGraphicalInformation().getWidth()) {
 				maxWidth = node.getGraphicalInformation().getWidth();
 			}
-			else if (maxHeight < node.getGraphicalInformation().getHeight()) {
+			if (maxHeight < node.getGraphicalInformation().getHeight()) {
 				maxHeight = node.getGraphicalInformation().getHeight();
 			}
 		}

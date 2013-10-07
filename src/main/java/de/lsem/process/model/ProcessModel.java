@@ -124,19 +124,25 @@ public class ProcessModel {
 		}
 	}
 	
-	public Collection<ProcessNode> getAdjacentNodes(ProcessNode node) {
+	public Collection<ProcessNode> getTargetNodes(ProcessNode node) {
 		HashSet<ProcessNode> nodes = new HashSet<ProcessNode>();
-		
-		Collection<ProcessEdge> es = this.getEdgesWithSource(node);
-		for (ProcessEdge e : es) {
+		for (ProcessEdge e : this.getEdgesWithSource(node)) {
 			nodes.add(e.getTarget());
 		}
-		
-		es = this.getEdgesWithTarget(node);
-		for (ProcessEdge e : es) {
+		return nodes;
+	}
+	
+	public Collection<ProcessNode> getSourceNodes(ProcessNode node) {
+		HashSet<ProcessNode> nodes = new HashSet<ProcessNode>();
+		for (ProcessEdge e : this.getEdgesWithTarget(node)) {
 			nodes.add(e.getSource());
 		}
-		
+		return nodes;
+	}
+	
+	public Collection<ProcessNode> getAdjacentNodes(ProcessNode node) {
+		Collection<ProcessNode> nodes = this.getSourceNodes(node);
+		nodes.addAll(this.getTargetNodes(node));		
 		return nodes;
 	}
 	
@@ -161,7 +167,9 @@ public class ProcessModel {
 			return new HashSet<ProcessEdge>();
 		}
 		
-		return this.edgesWithTarget.get(node);
+		HashSet<ProcessEdge> edges = new HashSet<ProcessEdge>();
+		edges.addAll(this.edgesWithTarget.get(node));
+		return edges;
 	}
 
 	public Collection<ProcessEdge> getEdgesWithSource(ProcessNode node) {
@@ -169,7 +177,9 @@ public class ProcessModel {
 			return new HashSet<ProcessEdge>();
 		}
 		
-		return this.edgesWithSource.get(node);
+		HashSet<ProcessEdge> edges = new HashSet<ProcessEdge>();
+		edges.addAll(this.edgesWithSource.get(node));
+		return edges;
 	}
 	
 	public Set<ProcessEdge> getEdges() {
@@ -204,5 +214,9 @@ public class ProcessModel {
 	
 	public static interface NodeVisitor {
 		void visit(ProcessNode node);
+	}
+	
+	public String toString() {
+		return this.name;
 	}
 }

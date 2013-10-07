@@ -105,6 +105,7 @@ public class BagOfWords {
 			if (node.isActivity() || node.getLabel().equals("")) {
 				BagOfWords bag = new BagOfWords(node.getModel());
 				bag.addNode(node);
+				bag.model = node.getModel();
 				
 				for (String word : Utils.tokenizeAndRemoveStopWords(node.getLabel())) {
 					bag.addWord(word);
@@ -120,5 +121,71 @@ public class BagOfWords {
 	
 	public boolean containsNode(ProcessNode node) {
 		return this.nodes.contains(node);
+	}
+	
+	
+	
+	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((model == null) ? 0 : model.getId().hashCode());
+		
+		if (nodes == null || nodes.size() == 0) {
+			result *= prime;
+		}
+		else {
+			for (ProcessNode n : nodes) {
+				result = prime * result + ((n == null) ? 0 :  n.getId().hashCode());
+			}
+		}
+		
+		if (words == null || words.size() == 0) {
+			result *= prime;
+		}
+		else {
+			for (String w : words) {
+				result = prime * result + ((w == null) ? 0 : w.hashCode());
+			}
+		}
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null || !BagOfWords.class.isAssignableFrom(obj.getClass())) {
+			return false;
+		}
+		
+		BagOfWords bag = (BagOfWords)obj;
+		if (!(nodesContained(bag, this) && nodesContained(this, bag))) {
+			return false;
+		}
+		
+		if (!(wordsContained(bag, this) && wordsContained(this, bag))) {
+			return false;
+		}
+		
+		return true;
+	}
+	
+
+	private static boolean wordsContained(BagOfWords bag1, BagOfWords bag2) {
+		for (String node : bag1.words) {
+			if (!bag2.words.contains(node)) {
+				return false;
+			}
+		}		
+		return true;
+	}
+	
+	private static boolean nodesContained(BagOfWords bag1, BagOfWords bag2) {
+		for (ProcessNode node : bag1.nodes) {
+			if (!bag2.nodes.contains(node)) {
+				return false;
+			}
+		}		
+		return true;
 	}
 }

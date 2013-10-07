@@ -10,6 +10,9 @@ public class EvaluationMeasures {
 	private double meanPrecision;
 	private double meanRecall;
 	private double meanFmeasure;
+	private int numberTps = 0;
+	private int numberFps = 0;
+	private int numberFns = 0;
 	private List<Integer> tps;
 	private List<Integer> fps;
 	private List<Integer> fns;
@@ -86,7 +89,7 @@ public class EvaluationMeasures {
 		for (int a = 0; a < this.tps.size(); a++) {
 			double tp = this.tps.get(a);
 			double fp = this.fps.get(a);
-			tp = (tp == 0 && fp == 0) ? 1 : tp;
+			tp = (tp == 0 && fp == 0) ? 1 : tp;			
 			double fn = this.fns.get(a);
 			double precision = tp / (tp + fp);
 			double recall = tp / (tp + fn);
@@ -94,6 +97,9 @@ public class EvaluationMeasures {
 			precisions.add(precision);
 			recalls.add(recall);
 			fmeasures.add(fmeasure);
+			this.numberFns += fn;
+			this.numberFps += fp;
+			this.numberTps += tp;
 		}
 		
 		this.meanPrecision = this.calculateMean(precisions);
@@ -102,7 +108,19 @@ public class EvaluationMeasures {
 		
 		this.stdPrecision = this.calculateStd(precisions, this.getMeanPrecision());
 		this.stdRecall = this.calculateStd(recalls, this.getMeanRecall());
-		this.stdFmeasure = this.calculateStd(fmeasures, this.getMeanFmeasure());
+		this.stdFmeasure = this.calculateStd(fmeasures, this.getMeanFmeasure());		
+	}
+	
+	public int getNumberTps() {
+		return this.numberTps;
+	}
+	
+	public int getNumberFps() {
+		return this.numberFps;
+	}
+	
+	public int getNumberFns() {
+		return this.numberFns;
 	}
 
 	private double calculateStd(List<Double> values, double mean) {

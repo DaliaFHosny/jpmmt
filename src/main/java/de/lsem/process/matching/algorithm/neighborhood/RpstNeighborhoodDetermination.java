@@ -23,7 +23,7 @@ import de.lsem.process.rpst.RefinedProcessStructureTree.Node;
 public class RpstNeighborhoodDetermination extends NeighborhoodDetermination {
 
 	@Override
-	protected List<BagOfWords> selectNeighbors(BagOfWords bag, Matrix<BagOfWords> matrix, Collection<BagOfWords> modelBags) {
+	protected List<BagOfWords> selectNeighbors(BagOfWords bag, Matrix<BagOfWords> matrix) {
 		ArrayList<BagOfWords> list = new ArrayList<BagOfWords>();
 		
 		for (BagOfWords bag2 : matrix.getObjects2()) {
