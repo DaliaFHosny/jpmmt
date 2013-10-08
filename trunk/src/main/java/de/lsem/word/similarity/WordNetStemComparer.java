@@ -7,7 +7,7 @@ import de.lsem.matrix.ObjectComparer;
 import de.lsem.word.Utils;
 
 /*
- * Copyright (c) 2013 Christopher Klinkmï¿½ller
+ * Copyright (c) 2013 Christopher Klinkmüller
  * 
  * This software is released under the terms of the
  * MIT license. See http://opensource.org/licenses/MIT
@@ -28,8 +28,8 @@ public final class WordNetStemComparer implements ObjectComparer<String> {
 	
 	@Override
 	public double compare(String word1, String word2) {
-		List<String> stems1 = this.getStems(word1);
-		List<String> stems2 = this.getStems(word2);
+		List<String> stems1 = Utils.stemWordNet(word1);
+		List<String> stems2 = Utils.stemWordNet(word2);
 		
 		double max = 0;		
 		for (String stem1 : stems1) {
@@ -44,15 +44,5 @@ public final class WordNetStemComparer implements ObjectComparer<String> {
 		}		
 		return max;
 	}
-
-	private List<String> getStems(String word) {
-		ArrayList<String> stems = new ArrayList<String>();
-		
-		stems.addAll(Utils.stemWordNetAdjective(word));
-		stems.addAll(Utils.stemWordNetAdverb(word));
-		stems.addAll(Utils.stemWordNetVerb(word));
-		stems.addAll(Utils.stemWordNetNoun(word));
-		
-		return stems;
-	}
+	
 }
