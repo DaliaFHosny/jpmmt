@@ -26,6 +26,16 @@ public class BagOfWords {
 	public BagOfWords(ProcessModel model) {
 		this.words = HashMultiset.create();
 		this.nodes = new HashSet<ProcessNode>();
+		this.model = model;
+	}
+	
+	public BagOfWords(ProcessNode node) {
+		this(node.getModel());
+		this.addNode(node);
+		
+		for (String word : Utils.tokenizeAndRemoveStopWords(node.getLabel())) {
+			this.addWord(word);
+		}	
 	}
 	
 	public ProcessModel getProcessModel() {
@@ -103,13 +113,8 @@ public class BagOfWords {
 		
 		for (ProcessNode node : nodes) {
 			if (node.isActivity() || node.getLabel().equals("")) {
-				BagOfWords bag = new BagOfWords(node.getModel());
-				bag.addNode(node);
-				bag.model = node.getModel();
+				BagOfWords bag = new BagOfWords(node);
 				
-				for (String word : Utils.tokenizeAndRemoveStopWords(node.getLabel())) {
-					bag.addWord(word);
-				}
 				if (bag.wordsSize() != 0) {
 					bags.add(bag);
 				}				
@@ -121,10 +126,7 @@ public class BagOfWords {
 	
 	public boolean containsNode(ProcessNode node) {
 		return this.nodes.contains(node);
-	}
-	
-	
-	
+	}	
 	
 	@Override
 	public int hashCode() {

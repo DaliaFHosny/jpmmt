@@ -10,7 +10,12 @@ import java.util.StringTokenizer;
 import de.lsem.config.Configuration;
 import de.lsem.word.similarity.LevenshteinComparer;
 import edu.cmu.lti.ws4j.util.PorterStemmer;
+import edu.mit.jwi.item.IIndexWord;
+import edu.mit.jwi.item.IPointer;
+import edu.mit.jwi.item.IWord;
+import edu.mit.jwi.item.IWordID;
 import edu.mit.jwi.item.POS;
+import edu.mit.jwi.item.Pointer;
 import edu.mit.jwi.morph.WordnetStemmer;
 
 /*
@@ -31,11 +36,17 @@ public class Utils {
 	private static WordnetStemmer wordnetStemmer;
 	private static PorterStemmer porterStemmer;
 	private static LevenshteinComparer levenshteinComparer;
+	private static IPointer antonym;
+	private static IPointer derived;
+	private static IPointer adjDerived;
 	
 	static {
 		wordnetStemmer = new WordnetStemmer(Configuration.INSTANCE.getWordNetDictionary());		
 		porterStemmer = new PorterStemmer();
 		levenshteinComparer = new LevenshteinComparer();
+		antonym = Pointer.ANTONYM;
+		derived = Pointer.DERIVATIONALLY_RELATED;
+		adjDerived = Pointer.DERIVED_FROM_ADJ;
 	}
 	
 	/**
@@ -55,6 +66,15 @@ public class Utils {
 	 */
 	public static List<String> stemWordNetNoun(String word) {
 		return wordnetStemmer.findStems(word, POS.NOUN);
+	}
+	
+	public static List<String> stemWordNet(String word) {
+		List<String> stems = new ArrayList<String>();
+		stems.addAll(stemWordNetAdjective(word));
+		stems.addAll(stemWordNetAdverb(word));
+		stems.addAll(stemWordNetNoun(word));
+		stems.addAll(stemWordNetVerb(word));
+		return stems;
 	}
 	
 	/**
@@ -180,5 +200,71 @@ public class Utils {
 		}
 		
 		return termGroups;
+	}
+	
+	public static Collection<String> getRelatedWords(String str) {
+		List<IWordID> words = getIndexWords(str);
+		Collection<String> w = getRelated(words, derived, true);
+		w.addAll(getRelated(words, adjDerived, true));
+		return w;
+	}
+	
+	private static Collection<String> getRelated(List<IWordID> words, IPointer pointer, boolean first) {
+		Set<String> related = new HashSet<String>();
+		for (IWordID indexWord : words) {
+			IWord word = Configuration.INSTANCE.getWordNetDictionary().getWord(indexWord);
+			related.add(word.getLemma());
+			List<IWordID> relatedIds = word.getRelatedMap().get(pointer);
+			if (relatedIds != null) {
+				for (IWordID r : relatedIds) {
+					IWord rel = Configuration.INSTANCE.getWordNetDictionary().getWord(r);
+					related.add(rel.getLemma());
+				}
+				if (first) {
+					related.addAll(getRelated(relatedIds, pointer, false));
+				}
+			}			
+		}				
+		return related;
+	}
+	
+	private static List<IWordID> getIndexWords(String word) {
+		List<IWordID> words = new ArrayList<IWordID>();
+		addIndexWord(word, words, POS.VERB);
+		addIndexWord(word, words, POS.NOUN);
+		addIndexWord(word, words, POS.ADVERB);
+		addIndexWord(word, words, POS.ADJECTIVE);
+		return words;
+	}
+	
+	private static void addIndexWord(String word, List<IWordID> words, POS pos) {
+		IIndexWord indexWord = Configuration.INSTANCE.getWordNetDictionary().getIndexWord(word, pos);
+		if (indexWord != null && indexWord.getWordIDs().size() > 0) {
+			words.addAll(indexWord.getWordIDs());
+		}
+	}
+	
+	public static boolean areAntonyms(String str1, String str2) {
+		List<IWordID> words1 = getIndexWords(str1);
+		List<IWordID> words2 = getIndexWords(str2);
+		Collection<String> antonyms1 = getRelated(words1, antonym, true);
+		Collection<String> antonyms2 = getRelated(words2, antonym, true);
+		Collection<String> derived1 = getRelated(words1, derived, true);
+		Collection<String> derived2 = getRelated(words2, derived, true);
+		Collection<String> adjDerived1 = getRelated(words1, adjDerived, true);
+		Collection<String> adjDerived2 = getRelated(words2, adjDerived, true);
+		
+		return contains(antonyms1, derived2) || contains(antonyms2, derived1) || 
+			   contains(antonyms1, adjDerived2) || contains(antonyms2, adjDerived1);
+	}	
+
+	private static boolean contains(Collection<String> antonyms, Collection<String> derived) {
+		for (String a : antonyms) {
+			if (derived.contains(a)) {
+				return true;
+			}
+		}
+		
+		return false;
 	}
 }
