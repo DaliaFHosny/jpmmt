@@ -202,6 +202,17 @@ public class Utils {
 		return termGroups;
 	}
 	
+	public static boolean areWordsRelated(String word1, String word2) {
+		if (word1.equals(word2)) {
+			return true;
+		}
+		else {
+			Collection<String> words1 = getRelatedWords(word1);
+			Collection<String> words2 = getRelatedWords(word2);
+			return contains(words1, words2) || contains(words2, words1);
+		}
+	}
+	
 	public static Collection<String> getRelatedWords(String str) {
 		List<IWordID> words = getIndexWords(str);
 		Collection<String> w = getRelated(words, derived, true);

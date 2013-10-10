@@ -15,7 +15,7 @@ import de.lsem.process.model.ProcessModel;
  * for more information.
  */
 
-class DocumentFrequencyModelPairRepository {
+public class DocumentFrequencyModelPairRepository {
 	private HashMap<String, HashMap<String, DocumentFrequencyCollectionRepository>> repositories = new HashMap<String, HashMap<String, DocumentFrequencyCollectionRepository>>();
 	
 	public DocumentFrequencyModelPairRepository(Collection<ProcessModel> models) {
