@@ -17,7 +17,7 @@ import de.lsem.word.Utils;
  * for more information.
  */
 
-class DocumentFrequencyCollectionRepository {
+public class DocumentFrequencyCollectionRepository {
 	private HashMap<String, Double> documentFrequencies = new HashMap<String, Double>();
 	
 	public DocumentFrequencyCollectionRepository(Collection<ProcessModel> models) {
