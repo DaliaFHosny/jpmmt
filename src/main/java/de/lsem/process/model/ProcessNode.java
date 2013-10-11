@@ -107,18 +107,22 @@ public class ProcessNode {
 	public void setType(String type) {
 		this.type = type;
 	}
+
+	public boolean isOfType(String type) {
+		return this.type.equals(type);
+	}
 	
 	/**
 	 * Checks whether the node is an activity or not.
 	 * @return true if the node is of type ACTIVITY. Otherwise false.
 	 */
 	public boolean isActivity() {
-		return this.type.equals(ACTIVITY);
+		return this.isOfType(ACTIVITY);
 	}
 	
 	@Override
 	public String toString() {
-		return this.type.equals(ACTIVITY) ? (this.label.equals("") ? this.type : "\"" + this.label + "\"") : this.type;
+		return this.isActivity() ? (this.label.equals("") ? this.type : "\"" + this.label + "\"") : this.type;
 	}
 	
 	public void setGraphicalInformation(GraphicalInformation graphicalInformation) {
