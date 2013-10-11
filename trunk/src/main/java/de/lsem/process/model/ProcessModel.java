@@ -118,7 +118,7 @@ public class ProcessModel {
 	
 	public void removeEdge(ProcessEdge edge) {
 		if (edge != null && this.edges.containsKey(edge.getId())) {
-			this.edges.get(edge.getId());
+			this.edges.remove(edge.getId());
 			this.edgesWithSource.get(edge.getSource()).remove(edge);
 			this.edgesWithTarget.get(edge.getTarget()).remove(edge);
 		}

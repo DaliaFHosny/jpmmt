@@ -1,6 +1,5 @@
 package de.lsem.word.similarity;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import de.lsem.matrix.ObjectComparer;
