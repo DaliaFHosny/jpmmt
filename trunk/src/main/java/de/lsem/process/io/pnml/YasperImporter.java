@@ -15,6 +15,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import de.lsem.process.model.GraphicalInformation;
+import de.lsem.word.Utils;
 
 /*
  * Copyright (c) 2013 Christopher Klinkmüller
@@ -71,6 +72,9 @@ class YasperImporter {
 				Element textElement = (Element)nameElement.getElementsByTagName("text").item(0);
 				if (textElement != null) {
 					name = textElement.getTextContent().toLowerCase();
+					if (!Utils.isActivityLabel(name)) {
+						name = "";
+					}
 				}
 			}
 			

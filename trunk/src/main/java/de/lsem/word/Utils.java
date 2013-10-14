@@ -108,6 +108,15 @@ public class Utils {
 		StringTokenizer tokenizer = new StringTokenizer(text);
 		List<String> tokens = new ArrayList<String>();
 		while (tokenizer.hasMoreTokens()) {
+			tokens.add(tokenizer.nextToken().toLowerCase());
+		}				
+		return tokens;
+	}	
+	
+	public static List<String> tokenizeAndFilter(String text) {
+		StringTokenizer tokenizer = new StringTokenizer(text);
+		List<String> tokens = new ArrayList<String>();
+		while (tokenizer.hasMoreTokens()) {
 			tokens.add(tokenizer.nextToken().replaceAll("[^A-Za-z_]", "").toLowerCase());
 		}				
 		return tokens;
@@ -277,5 +286,28 @@ public class Utils {
 		}
 		
 		return false;
+	}
+	
+	public static boolean isActivityLabel(String label) {
+		if (label == null || label.equals("")) {
+			return false;
+		}
+		
+		if (label.startsWith("t") || label.startsWith("p")) {
+			CharSequence seq = label.subSequence(1, label.length());
+			boolean isNotDigit = true;
+			for (int a = 0; a < seq.length(); a++) {
+				char letter = seq.charAt(a);
+				if (!(letter >= '0' && letter <= '9')) {
+					isNotDigit = false;
+					break;
+				}
+			}
+			if (isNotDigit) {
+				return false;
+			}
+		}
+		
+		return true;
 	}
 }
