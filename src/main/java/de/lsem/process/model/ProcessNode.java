@@ -9,7 +9,7 @@ package de.lsem.process.model;
  */
 
 /**
- * @author klinke
+ * @author Christopher Klinkmüller
  *
  */
 public class ProcessNode {
@@ -107,7 +107,7 @@ public class ProcessNode {
 	public void setType(String type) {
 		this.type = type;
 	}
-
+	
 	public boolean isOfType(String type) {
 		return this.type.equals(type);
 	}
