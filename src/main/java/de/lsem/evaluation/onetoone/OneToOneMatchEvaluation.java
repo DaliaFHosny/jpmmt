@@ -79,4 +79,14 @@ public class OneToOneMatchEvaluation {
 	public String getAlignmentSeperator() {
 		return this.reader.getSeperator();
 	}
+	
+	public EvaluationMeasures evaluate(Collection<ModelAlignment> al1, Collection<ModelAlignment> al2, Collection<String> standardFiles) {
+		Map<String, Map<String, ModelAlignment>> standard = this.reader.bulkRead(standardFiles);
+		ModelAlignmentEvaluation evaluation = new ModelAlignmentEvaluation(standard);
+		return evaluation.evaluate(al1, al2);
+	}
+	
+	public List<ModelAlignment> transform(Collection<ProcessMapping> mappings) {
+		return ModelAlignmentEvaluation.transform(mappings);
+	}
 }

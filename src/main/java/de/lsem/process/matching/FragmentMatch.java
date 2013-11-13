@@ -11,6 +11,7 @@ package de.lsem.process.matching;
 public class FragmentMatch {
 	private Fragment fragment1;
 	private Fragment fragment2;
+	private double similarity;
 	
 	public FragmentMatch() {		
 	}
@@ -18,6 +19,12 @@ public class FragmentMatch {
 	public FragmentMatch(Fragment fragment1, Fragment fragment2) {
 		this.fragment1 = fragment1;
 		this.fragment2 = fragment2;
+	}
+	
+	public FragmentMatch(Fragment fragment1, Fragment fragment2, double similarity) {
+		this.fragment1 = fragment1;
+		this.fragment2 = fragment2;
+		this.similarity = similarity;
 	}
 	
 	public Fragment getFragment1() {
@@ -34,5 +41,13 @@ public class FragmentMatch {
 	
 	public void setFragment2(Fragment fragment2) {
 		this.fragment2 = fragment2;
+	}
+	
+	public double getSimilarity() {
+		return this.similarity;
+	}
+	
+	public void setSimilarity(double similarity) {
+		this.similarity = similarity;
 	}
 }

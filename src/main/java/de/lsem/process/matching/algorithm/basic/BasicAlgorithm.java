@@ -29,7 +29,7 @@ import de.lsem.process.model.ProcessNode;
  *
  */
 public class BasicAlgorithm extends MappingAlgorithm {
-	private double matchThreshold = 0.75;
+	private double matchThreshold = 0.5;
 	private MatrixCalculator<BagOfWords> matrixCalculator;
 	
 	public BasicAlgorithm(ObjectComparer<BagOfWords> comparer, double threshold) {
@@ -64,28 +64,29 @@ public class BasicAlgorithm extends MappingAlgorithm {
 		ProcessMapping processMapping = new ProcessMapping(process1, process2);
 		
 		int i = 0;
-		while (i < matches.size() && sim.getValue(matches.get(i).getObject1(), matches.get(i).getObject2()) >= this.matchThreshold) {
+		double similarity = i < matches.size() ? sim.getValue(matches.get(i).getObject1(), matches.get(i).getObject2()) : -1;
+		while (similarity >= this.matchThreshold) {
 			Match<BagOfWords> selectedMatch = matches.get(i);
 			for (ProcessNode node1 : selectedMatch.getObject1().getNodes()) {
 				for (ProcessNode node2 : selectedMatch.getObject2().getNodes()) {
-					Match<ProcessNode> match = new Match<ProcessNode>(node1, node2);
-					this.addMatchToProcessMapping(processMapping, match);					
+					this.addMatchToProcessMapping(processMapping, node1, node2, similarity);					
 				}
 			}
 			matches.remove(i);
+			similarity = i < matches.size() ? sim.getValue(matches.get(i).getObject1(), matches.get(i).getObject2()) : -1;
 		}
 		
 		return processMapping;
 	}
 
-	private void addMatchToProcessMapping(ProcessMapping processMapping, Match<ProcessNode> match) {
+	private void addMatchToProcessMapping(ProcessMapping processMapping, ProcessNode node1, ProcessNode node2, double similarity) {
 		Fragment fragment1 = new Fragment();
-		fragment1.addProcessNode(match.getObject1());
+		fragment1.addProcessNode(node1);
 		
 		Fragment fragment2 = new Fragment();
-		fragment2.addProcessNode(match.getObject2());
+		fragment2.addProcessNode(node2);		
 		
-		processMapping.addFragmentMatch(new FragmentMatch(fragment1, fragment2));		
+		processMapping.addFragmentMatch(new FragmentMatch(fragment1, fragment2, similarity));		
 	}
 
 	protected Matrix<BagOfWords> determineSimilarityMatrix(ProcessModel process1, ProcessModel process2) {
