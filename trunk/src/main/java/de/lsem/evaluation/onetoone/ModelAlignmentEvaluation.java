@@ -36,6 +36,61 @@ class ModelAlignmentEvaluation {
 		return metrics;
 	}
 
+	public EvaluationMeasures evaluate(Collection<ModelAlignment> alignment1, Collection<ModelAlignment> alignment2) {
+		List<ModelAlignment> alignments = this.union(alignment1, alignment2);
+		EvaluationMeasures metrics = this.evaluateAlignments(alignments);	
+		return metrics;
+	}
+	
+	private List<ModelAlignment> union(Collection<ModelAlignment> alignment1, Collection<ModelAlignment> alignment2) {
+		List<ModelAlignment> alignments = new ArrayList<ModelAlignment>();		
+		
+		for (ModelAlignment al1 : alignment1) {
+			ModelAlignment al2 = this.getAlignment(alignment2, al1.getFirstModel(), al1.getSecondModel());
+			
+			if (al2 == null) {
+				alignments.add(al1);
+			}
+			else {
+				ModelAlignment al = new ModelAlignment(al1.getFirstModel(), al1.getSecondModel());
+				alignments.add(al);
+				
+				for (ActivityMatch match : al1.getActivityMatches()) {
+					ActivityMatch ma = new ActivityMatch(match.getFirstLabel(), match.getSecondLabel());
+					al.addActivityMatch(ma);
+				}
+				
+				for (ActivityMatch match : al2.getActivityMatches()) {
+					if (!this.containsMatch(al1, match)) {
+						ActivityMatch ma = new ActivityMatch(match.getFirstLabel(), match.getSecondLabel());
+						al.addActivityMatch(ma);
+					}
+				}
+			}
+		}	
+		
+		return alignments;
+	}
+
+	private boolean containsMatch(ModelAlignment al, ActivityMatch match) {
+		for (ActivityMatch ma : al.getActivityMatches()) {
+			if (ma.getFirstLabel().equals(match.getFirstLabel()) && ma.getSecondLabel().equals(match.getSecondLabel())) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+
+	private ModelAlignment getAlignment(Collection<ModelAlignment> alignments, String firstModel, String secondModel) {
+		for (ModelAlignment al : alignments) {
+			if (al.getFirstModel().equals(firstModel) && al.getSecondModel().equals(secondModel)) {
+				return al;
+			}
+		}
+		return null;
+	}
+
 	private EvaluationMeasures evaluateAlignments(Collection<ModelAlignment> alignments) {
 		EvaluationMeasures measures = new EvaluationMeasures();
 		
@@ -67,17 +122,17 @@ class ModelAlignmentEvaluation {
 		measures.add(tp, fp, fn);
 	}
 
-	private List<ModelAlignment> transform(Collection<ProcessMapping> mappings) {
+	public static List<ModelAlignment> transform(Collection<ProcessMapping> mappings) {
 		List<ModelAlignment> alignments = new ArrayList<ModelAlignment>();
 		
 		for (ProcessMapping mapping : mappings) {
-			alignments.add(this.transform(mapping));
+			alignments.add(transform(mapping));
 		}
 		
 		return alignments;
 	}
 
-	private ModelAlignment transform(ProcessMapping mapping) {
+	public static ModelAlignment transform(ProcessMapping mapping) {
 		ModelAlignment alignment = new ModelAlignment(mapping.getModel1().getName(), mapping.getModel2().getName());
 		for (FragmentMatch match : mapping.getFragmentMatch()) {
 			for (ProcessNode node1 : match.getFragment1().getProcessNodes()) {

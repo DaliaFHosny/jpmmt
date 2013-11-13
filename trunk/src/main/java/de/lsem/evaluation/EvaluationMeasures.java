@@ -89,9 +89,8 @@ public class EvaluationMeasures {
 		for (int a = 0; a < this.tps.size(); a++) {
 			double tp = this.tps.get(a);
 			double fp = this.fps.get(a);
-			tp = (tp == 0 && fp == 0) ? 1 : tp;			
 			double fn = this.fns.get(a);
-			double precision = tp / (tp + fp);
+			double precision = (tp + fp == 0) ? 1 : tp / (tp + fp);
 			double recall = tp / (tp + fn);
 			double fmeasure = (precision + recall == 0) ? 0 : 2 * precision * recall / (precision + recall);			
 			precisions.add(precision);
@@ -121,6 +120,18 @@ public class EvaluationMeasures {
 	
 	public int getNumberFns() {
 		return this.numberFns;
+	}
+	
+	public void setNumberTps(int number) {
+		this.numberTps = number;
+	}
+	
+	public void setNumberFns(int number) {
+		this.numberFns = number;
+	}
+	
+	public void setNumberFps(int number) {
+		this.numberFps = number;
 	}
 
 	private double calculateStd(List<Double> values, double mean) {
