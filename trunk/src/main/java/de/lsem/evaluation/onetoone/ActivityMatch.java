@@ -16,10 +16,17 @@ package de.lsem.evaluation.onetoone;
 public class ActivityMatch {
 	private String firstLabel;
 	private String secondLabel;
+	private double similarity;	
 	
 	public ActivityMatch(String firstLabel, String secondLabel) {
 		this.firstLabel = firstLabel;
 		this.secondLabel = secondLabel;
+	}	
+	
+	public ActivityMatch(String firstLabel, String secondLabel, double similarity) {
+		this.firstLabel = firstLabel;
+		this.secondLabel = secondLabel;
+		this.similarity = similarity;
 	}
 	
 	public String getFirstLabel() {
@@ -38,4 +45,11 @@ public class ActivityMatch {
 		this.secondLabel = secondLabel;
 	}
 	
+	public void setSimilarity(double similarity) {
+		this.similarity = similarity;
+	}
+	
+	public double getSimilarity() {
+		return this.similarity;
+	}
 }

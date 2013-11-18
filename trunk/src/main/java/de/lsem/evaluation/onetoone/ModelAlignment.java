@@ -16,12 +16,18 @@ import java.util.Set;
 public class ModelAlignment {
 	private String firstModel;
 	private String secondModel;
+	private double similarity;
 	private Set<ActivityMatch> activityMatches;
 	
 	public ModelAlignment(String firstModel, String secondModel) {
+		this(firstModel, secondModel, 0);
+	}
+
+	public ModelAlignment(String firstModel, String secondModel, double similarity) {
 		this.activityMatches = new HashSet<ActivityMatch>();
 		this.firstModel = firstModel;
 		this.secondModel = secondModel;
+		this.similarity = similarity;
 	}
 	
 	public String getFirstModel() {
@@ -46,5 +52,13 @@ public class ModelAlignment {
 	
 	public void removeActivityMatch(ActivityMatch match) {
 		this.activityMatches.remove(match);
+	}
+	
+	public double getSimilarity() {
+		return similarity;
+	}
+
+	public void setSimilarity(double similarity) {
+		this.similarity = similarity;
 	}
 }
