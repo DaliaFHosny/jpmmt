@@ -165,7 +165,7 @@ public class Utils {
 		String stem1 = stemPorter(word1);
 		String stem2 = stemPorter(word2);
 		double s = levenshteinComparer.compare(stem1, stem2);
-		if (s >= 0.5) {
+		if (s >= 0.85) {
 			return true;
 		}
 		
@@ -262,6 +262,10 @@ public class Utils {
 		if (indexWord != null && indexWord.getWordIDs().size() > 0) {
 			words.addAll(indexWord.getWordIDs());
 		}
+	}
+	
+	public static boolean isInWordNet(String word) {
+		return getIndexWords(word).size() == 0 ? false : true;
 	}
 	
 	public static boolean areAntonyms(String str1, String str2) {
