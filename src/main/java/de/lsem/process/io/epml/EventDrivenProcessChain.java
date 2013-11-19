@@ -10,7 +10,7 @@ import de.lsem.process.model.ProcessModel;
  * for more information.
  */
 
-class EventDrivenProcessChain extends ProcessModel {
+public class EventDrivenProcessChain extends ProcessModel {
 	public EventDrivenProcessChain() {
 		super();
 	}

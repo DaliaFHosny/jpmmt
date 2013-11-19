@@ -121,5 +121,7 @@
 		<StopWord>also</StopWord>
 		<StopWord>our</StopWord>
 		<StopWord>why</StopWord>
+		<StopWord>via</StopWord>
+		<StopWord>without</StopWord>
 	</StopWords>
 </Configuration>

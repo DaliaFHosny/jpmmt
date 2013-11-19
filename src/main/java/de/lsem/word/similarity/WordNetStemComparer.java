@@ -17,12 +17,7 @@ public final class WordNetStemComparer implements ObjectComparer<String> {
 	private ObjectComparer<String> wordSimilarity;
 	
 	public WordNetStemComparer(ObjectComparer<String> wordSimilarity) {
-		if (wordSimilarity instanceof WordNetStemComparer) {
-			//TODO: Exception
-		}
-		else {
-			this.wordSimilarity = wordSimilarity;
-		}
+		this.wordSimilarity = wordSimilarity;
 	}
 	
 	@Override

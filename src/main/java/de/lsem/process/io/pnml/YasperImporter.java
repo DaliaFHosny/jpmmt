@@ -33,7 +33,6 @@ class YasperImporter {
 		try {
 			this.documentBuilder = factory.newDocumentBuilder();
 		} catch (ParserConfigurationException e) {
-			// TODO: hier Exception werfen
 			e.printStackTrace();			
 		}
 	}
@@ -129,7 +128,6 @@ class YasperImporter {
 		}
 		catch (Exception ex) {
 			ex.printStackTrace();
-			// TODO: hier Exception werfen
 		}
 		
 		return null;
@@ -159,7 +157,6 @@ class YasperImporter {
 			document.getDocumentElement().normalize();
 			return document.getDocumentElement();
 		} catch (SAXException | IOException e) {
-			// TODO: hier Exception werfen
 			e.printStackTrace();
 		}
 		

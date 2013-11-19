@@ -51,7 +51,7 @@ public class JsonBpmnReader extends ProcessModelReader {
 			return this.convert(object);
 		}
 		catch (Exception ex) {
-			// TODO: exception 
+			ex.printStackTrace(); 
 		}
 		return null;
 	}

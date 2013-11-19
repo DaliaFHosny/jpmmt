@@ -41,7 +41,6 @@ class EpmlImporter {
 		try {
 			this.documentBuilder = factory.newDocumentBuilder();
 		} catch (ParserConfigurationException e) {
-			// TODO: hier Exception werfen
 			e.printStackTrace();			
 		}
 	}
@@ -117,7 +116,6 @@ class EpmlImporter {
 			document.getDocumentElement().normalize();
 			return document.getDocumentElement();
 		} catch (SAXException | IOException e) {
-			// TODO: hier Exception werfen
 			e.printStackTrace();
 		}
 		
