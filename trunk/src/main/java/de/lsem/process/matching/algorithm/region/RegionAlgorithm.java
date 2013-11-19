@@ -58,7 +58,6 @@ public class RegionAlgorithm extends BasicAlgorithm {
 	private void updateRegionValues(Matrix<BagOfWords> modelSim, Matrix<BagOfWords> topLevelSim) {
 		List<Match<BagOfWords>> bagMatches = topLevelSim.toDescendingSortedMatchList();
 		
-		// TODO: use ProcessMapping instead of MappingDeterminer
 		MappingDeterminer<BagOfWords> determiner = new MappingDeterminer<BagOfWords>();		
 		while (bagMatches.size() > 0 && topLevelSim.getValue(bagMatches.get(0).getObject1(), bagMatches.get(1).getObject2()) > this.regionThreshold) {
 			determiner.addMatch(bagMatches.get(0));

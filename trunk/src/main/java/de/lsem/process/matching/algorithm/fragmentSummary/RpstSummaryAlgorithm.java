@@ -158,9 +158,6 @@ public class RpstSummaryAlgorithm extends BasicAlgorithm {
 				else if (model2 == bag.getProcessModel()) {
 					bags2.add(bag);
 				}
-				else {
-					// TODO: throw exception
-				}
 			}
 		}
 	}
@@ -179,9 +176,6 @@ public class RpstSummaryAlgorithm extends BasicAlgorithm {
 				}
 				else if (bag.getProcessModel() == model2) {
 					this.addNodesToFragment(bag, match.getFragment2());
-				}
-				else {
-					// TODO: throw exception
 				}
 			}
 			

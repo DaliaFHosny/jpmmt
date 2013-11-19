@@ -107,9 +107,6 @@ public class DefaultFragmentSummary extends FragmentSummary {
 		if (model1 == null) {			
 			return processModel;
 		}
-		else if (processModel != model1) {
-			// TODO: throw exception
-		}
 		
 		return model1;
 	}

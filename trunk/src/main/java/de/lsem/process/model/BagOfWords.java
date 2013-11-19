@@ -65,9 +65,6 @@ public class BagOfWords {
 	}
 	
 	public void addNode(ProcessNode node) {
-		if (node.getModel() != this.model) {
-			//TODO: throw Exception
-		}
 		this.nodes.add(node);
 	}
 	

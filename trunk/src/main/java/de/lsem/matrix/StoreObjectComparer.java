@@ -15,13 +15,8 @@ public final class StoreObjectComparer<T> implements ObjectComparer<T> {
 	private HashMap<T, HashMap<T, Double>> similarities;	
 	
 	public StoreObjectComparer(ObjectComparer<T> comparer) {
-		if (comparer instanceof StoreObjectComparer) {
-			//TODO: Exception
-		}
-		else {
-			this.comparer = comparer;
-			this.similarities = new HashMap<T, HashMap<T, Double>>();
-		}
+		this.comparer = comparer;
+		this.similarities = new HashMap<T, HashMap<T, Double>>();
 	}	
 	
 	@Override
