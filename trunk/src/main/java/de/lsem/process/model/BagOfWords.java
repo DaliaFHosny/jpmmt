@@ -33,7 +33,7 @@ public class BagOfWords {
 		this(node.getModel());
 		this.addNode(node);
 		
-		for (String word : Utils.tokenizeAndRemoveStopWords(node.getLabel())) {
+		for (String word : Utils.tokenizeAndRemoveStopWords(node.getLabel().replace("\n", " ").replace("\\n", " "))) {
 			this.addWord(word);
 		}	
 	}
