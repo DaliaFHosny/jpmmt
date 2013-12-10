@@ -297,21 +297,21 @@ public class Utils {
 			return false;
 		}
 		
+		boolean isNotDigit = false;
 		if (label.startsWith("t") || label.startsWith("p")) {
 			CharSequence seq = label.subSequence(1, label.length());
-			boolean isNotDigit = true;
 			for (int a = 0; a < seq.length(); a++) {
 				char letter = seq.charAt(a);
 				if (!(letter >= '0' && letter <= '9')) {
-					isNotDigit = false;
+					isNotDigit = true;
 					break;
 				}
 			}
-			if (isNotDigit) {
-				return false;
-			}
+		}
+		else {
+			isNotDigit = true;
 		}
 		
-		return true;
+		return isNotDigit;
 	}
 }

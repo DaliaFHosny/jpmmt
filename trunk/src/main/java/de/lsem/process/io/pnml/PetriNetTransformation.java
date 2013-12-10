@@ -75,12 +75,12 @@ class PetriNetTransformation {
 		else {
 			ProcessModel model = petriNetNode.getModel();
 			ProcessNode node = model.addNode("split_" + petriNetNode.getId(), "", ProcessNode.PARALLEL_GATEWAY);
-			model.addEdge(petriNetNode.getId() + "->" + node.getId(), "", petriNetNode, node);
 			this.setGraphicalInformation(node, model.getTargetNodes(petriNetNode));
 			for (ProcessEdge edge : model.getEdgesWithSource(petriNetNode)) {
 				model.removeEdge(edge);
 				model.addEdge(edge.getId(), edge.getLabel(), node, edge.getTarget());
 			}
+			model.addEdge(petriNetNode.getId() + "->" + node.getId(), "", petriNetNode, node);			
 		}
 	}
 
@@ -91,12 +91,13 @@ class PetriNetTransformation {
 		else {
 			ProcessModel model = petriNetNode.getModel();
 			ProcessNode node = model.addNode("merge_" + petriNetNode.getId(), "", ProcessNode.PARALLEL_GATEWAY);
-			model.addEdge(node.getId() + "->" + petriNetNode.getId(), "", node, petriNetNode);
 			this.setGraphicalInformation(node, model.getSourceNodes(petriNetNode));
 			for (ProcessEdge edge : model.getEdgesWithTarget(petriNetNode)) {
 				model.removeEdge(edge);
 				model.addEdge(edge.getId(), edge.getLabel(), edge.getSource(), node);
 			}
+			model.addEdge(node.getId() + "->" + petriNetNode.getId(), "", node, petriNetNode);
+			
 		}
 	}
 	
