@@ -1,5 +1,6 @@
 package de.lsem.process.model;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -196,7 +197,7 @@ public class ProcessModel {
 		HashSet<ProcessNode> activities = new HashSet<ProcessNode>();
 		
 		for (String key : nodeIds.keySet()) {
-			if (nodeIds.get(key).getType().equals(ProcessNode.ACTIVITY)) {
+			if (nodeIds.get(key).isActivity()) {
 				activities.add(nodeIds.get(key));
 			}
 		}
@@ -210,6 +211,30 @@ public class ProcessModel {
 				visitor.visit(nodeIds.get(key));
 			}
 		}
+	}
+	
+	public Collection<ProcessNode> getStartNodes() {
+		ArrayList<ProcessNode> starts = new ArrayList<ProcessNode>();
+		
+		for (ProcessNode node : this.nodes) {
+			if (this.edgesWithTarget.get(node).size() == 0) {
+				starts.add(node);
+			}
+		}
+		
+		return starts;
+	}
+	
+	public Collection<ProcessNode> getEndNodes() {
+		ArrayList<ProcessNode> starts = new ArrayList<ProcessNode>();
+		
+		for (ProcessNode node : this.nodes) {
+			if (this.edgesWithSource.get(node).size() == 0) {
+				starts.add(node);
+			}
+		}
+		
+		return starts;
 	}
 	
 	public static interface NodeVisitor {

@@ -9,9 +9,10 @@ import java.util.Set;
 
 import de.lsem.process.model.ProcessModel;
 import de.lsem.process.model.ProcessNode;
+import de.lsem.word.Utils;
 
 /*
- * Copyright (c) 2013 Christopher Klinkmï¿½ller
+ * Copyright (c) 2013 Christopher Klinkmüller
  * 
  * This software is released under the terms of the
  * MIT license. See http://opensource.org/licenses/MIT
@@ -21,15 +22,16 @@ import de.lsem.process.model.ProcessNode;
 public abstract class ProcessModelReader {
 	private boolean removeMultipleExits;
 	private boolean removeMultipleEntries;
+	private boolean removeSilentTransitions;
 	
 	public ProcessModelReader() {
-		this.removeMultipleEntries = false;
-		this.removeMultipleExits = false;
+		this(false, false, false);
 	}
 	
-	public ProcessModelReader(boolean removeMultipleEntries, boolean removeMultipleExits) {
+	public ProcessModelReader(boolean removeMultipleEntries, boolean removeMultipleExits, boolean removeSilentTransitions) {
 		this.removeMultipleEntries = removeMultipleEntries;
 		this.removeMultipleExits = removeMultipleExits;
+		this.removeSilentTransitions = removeSilentTransitions;
 	}	
 	
 	public boolean isRemoveMultipleExits() {
@@ -52,9 +54,10 @@ public abstract class ProcessModelReader {
 		ProcessModel model = this.readModel(filename);
 		this.checkForMultipleEntries(model);
 		this.checkForMultipleExits(model);		
+		this.checkForSilentTransitions(model);
 		return model;
 	}
-	
+
 	protected abstract ProcessModel readModel(String filename);
 	
 	public List<ProcessModel> readModels(Collection<String> filenames) {
@@ -112,6 +115,22 @@ public abstract class ProcessModelReader {
 				for (ProcessNode entry : entries) {
 					process.addEdge("edge_" + start.getId() + "_" + entry.getId(), "", start, entry);
 				}
+			}
+		}
+	}
+	
+	protected void checkForSilentTransitions(ProcessModel model) {
+		if (this.removeSilentTransitions) {
+			Set<ProcessNode> silents = new HashSet<ProcessNode>();
+			
+			for (ProcessNode node : model.getActivities()) {
+				if (!Utils.isActivityLabel(node.getLabel())) {
+					silents.add(node);
+				}
+			}
+			
+			for (ProcessNode silent : silents) {
+				silent.setType(ProcessNode.UNKNOWN);
 			}
 		}
 	}

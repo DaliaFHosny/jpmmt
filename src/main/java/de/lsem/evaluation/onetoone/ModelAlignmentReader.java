@@ -39,9 +39,7 @@ class ModelAlignmentReader {
 			}
 			return alignment;
 		}
-		else {
-			System.out.println(filename);
-		}
+		
 		return null;
 	}
 	

@@ -21,11 +21,10 @@ public class EpmlReader extends ProcessModelReader {
 	private EpmlTransformer transformer;
 	
 	public EpmlReader() {
-		this(false, false);
+		this(false, false, false);
 	}
 	
-	public EpmlReader(boolean removeMultipleEntries, boolean removeMultipleExits) {
-		super(removeMultipleEntries, removeMultipleExits);
+	public EpmlReader(boolean removeMultipleEntries, boolean removeMultipleExits, boolean removeSilentTransititions) {
 		this.importer = new EpmlImporter();
 		this.transformer = new EpmlTransformer();
 	}

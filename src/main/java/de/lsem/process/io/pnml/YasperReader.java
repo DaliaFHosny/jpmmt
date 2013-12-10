@@ -16,11 +16,11 @@ public class YasperReader extends ProcessModelReader {
 	private PetriNetTransformation transformer;
 	
 	public YasperReader() {
-		this(false, false);
+		this(false, false, false);
 	}
 	
-	public YasperReader(boolean removeMultipleEntries, boolean removeMultipleExits) {
-		super(removeMultipleEntries, removeMultipleExits);
+	public YasperReader(boolean removeMultipleEntries, boolean removeMultipleExits, boolean removeSilentTransititions) {
+		super(removeMultipleEntries, removeMultipleExits, removeSilentTransititions);
 		this.importer = new YasperImporter();
 		this.transformer = new PetriNetTransformation();
 	}

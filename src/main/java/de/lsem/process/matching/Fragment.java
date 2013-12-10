@@ -1,7 +1,7 @@
 package de.lsem.process.matching;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import de.lsem.process.model.ProcessModel;
 import de.lsem.process.model.ProcessNode;
@@ -16,10 +16,10 @@ import de.lsem.process.model.ProcessNode;
 
 public class Fragment {
 	private ProcessModel processModel;
-	private Set<ProcessNode> nodes;
+	private List<ProcessNode> nodes;
 	
 	public Fragment() {
-		this.nodes = new HashSet<ProcessNode>();
+		this.nodes = new ArrayList<ProcessNode>();
 	}
 	
 	public ProcessModel getProcessModel() {
@@ -48,5 +48,13 @@ public class Fragment {
 	
 	public int getProcessNodesSize() {
 		return this.nodes.size();
+	}
+	
+	public ProcessNode getNode(int i) {
+		return this.nodes.get(i);
+	}
+	
+	public boolean containsNode(ProcessNode node) {
+		return this.nodes.contains(node);
 	}
 }
