@@ -40,12 +40,13 @@ class YasperImporter {
 	public PetriNet importFile(String filename) {
 		Element rootElement = this.readDocument(filename);		
 		
-		PetriNet net = this.readNet(rootElement, filename);
+		Element netEl = (Element)rootElement.getElementsByTagName("net").item(0);
+		PetriNet net = this.readNet(netEl, filename);
 		
-		HashMap<String, PetriNetNode> nodes = new HashMap<String, PetriNetNode>();
-		this.readNodes(net, rootElement.getElementsByTagName("place"), true, nodes);
-		this.readNodes(net, rootElement.getElementsByTagName("transition"), false, nodes);
-		this.readArcs(net, rootElement.getElementsByTagName("arc"), nodes);
+		HashMap<String, PetriNetNode> nodes = new HashMap<String, PetriNetNode>();		
+		this.readNodes(net, netEl.getElementsByTagName("place"), true, nodes);
+		this.readNodes(net, netEl.getElementsByTagName("transition"), false, nodes);
+		this.readArcs(net, netEl.getElementsByTagName("arc"), nodes);
 		
 		return net;
 	}
